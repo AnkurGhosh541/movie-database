@@ -6,7 +6,153 @@
     <title>The Movie Database</title>
     <link rel="stylesheet" href="../../css/styles-forms.css" />
   </head>
+
   <body>
-    <h1>Movie</h1>
+    <div class="container">
+      <header><h2 class="title">Add Movie</h2></header>
+      <form action="/movie" method="post" class="form" id="form">
+        <div class="input-group">
+          <label for="title">Title</label>
+          <input
+            type="text"
+            name="title"
+            id="title"
+            placeholder="The Titanic" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="year">Year of Release</label>
+          <input
+            type="number"
+            name="year"
+            id="year"
+            min="1900"
+            max="2024"
+            placeholder="1978" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="plot">Plot Outline</label>
+          <input
+            type="text"
+            name="plot"
+            id="plot"
+            placeholder="Type here ..." />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="length">Length in minutes</label>
+          <input
+            type="number"
+            name="length"
+            id="length"
+            min="0"
+            placeholder="120" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="genre">Genre(s)</label>
+          <select name="genre" id="genre"></select>
+        </div>
+        <div class="input-group">
+          <label for="production">Produced By</label>
+          <select name="production" id="production"></select>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="submit">Submit</button>
+          <button type="button" class="cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("form");
+      const title = document.getElementById("title");
+      const year = document.getElementById("year");
+      const plot = document.getElementById("plot");
+      const length = document.getElementById("length");
+      const genre = document.getElementById("genre");
+      const production = document.getElementById("production");
+      const cancelBtn = document.querySelector(".cancel");
+
+      cancelBtn.addEventListener("click", e => {
+        window.location.href = "/production";
+      });
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        if (checkInputs()) {
+          form.submit();
+        }
+      });
+
+      function checkInputs() {
+        const titleValue = title.value.trim();
+        const yearValue = year.value.trim();
+        const plotValue = plot.value.trim();
+        const lengthValue = length.value.trim();
+        const genreValue = genre.value.trim();
+        const productionValue = production.value.trim();
+        const error = {
+          name: false,
+          city: false,
+          state: false,
+          country: false,
+        };
+
+        if (nameValue === "") {
+          setErrorFor(name, "This field can not be empty");
+          error.name = true;
+        } else {
+          setSuccessFor(name);
+          error.name = false;
+        }
+
+        if (cityValue === "") {
+          setErrorFor(city, "This field can not be empty");
+          error.city = true;
+        } else {
+          setSuccessFor(city);
+          error.city = false;
+        }
+
+        if (stateValue === "") {
+          setErrorFor(state, "This field can not be empty");
+          error.state = true;
+        } else {
+          setSuccessFor(state);
+          error.state = false;
+        }
+
+        if (countryValue === "") {
+          setErrorFor(country, "This field can not be empty");
+          error.country = true;
+        } else {
+          setSuccessFor(country);
+          error.country = false;
+        }
+
+        return !error.name && !error.city && !error.state && !error.country;
+      }
+
+      function setErrorFor(element, message) {
+        element.nextElementSibling.textContent = message;
+        element.parentElement.classList.remove("success");
+        element.parentElement.classList.add("error");
+      }
+
+      function setSuccessFor(element) {
+        element.parentElement.classList.remove("error");
+        element.parentElement.classList.add("success");
+      }
+    </script>
   </body>
 </html>

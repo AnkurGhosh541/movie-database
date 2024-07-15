@@ -178,6 +178,10 @@ app.post("/production", (req, res) => {
   res.redirect("/production");
 });
 
+app.post("/movie", (req, res) => {
+  res.redirect("/movie");
+});
+
 // DELETE DATA
 
 app.get("/production/delete/:id", (req, res) => {
