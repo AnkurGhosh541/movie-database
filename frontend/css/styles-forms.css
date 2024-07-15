@@ -1,0 +1,189 @@
+/* FONTS */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap");
+
+/* ICONS */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+}
+
+body {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgb(174, 238, 220);
+  /* background: linear-gradient(
+    214deg,
+    rgba(174, 238, 220, 1) 0%,
+    rgba(255, 179, 117, 1) 100%
+  ); */
+  background: linear-gradient(
+    to right bottom,
+    #ff8f20,
+    #e2ac00,
+    #bbc500,
+    #87da3c,
+    #12eb76
+  );
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+  gap: 2rem;
+  width: 50rem;
+  padding: 2.4rem 3.6rem 3.6rem;
+  /* background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.25),
+    rgba(255, 255, 255, 0.05)
+  );
+  box-shadow: 0 6px 20px 0 rgba(202, 137, 58, 0.37);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  border: 1px solid rgba(255, 255, 255, 0.18); */
+  background: #fafbf0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+
+header {
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.form {
+  width: 100%;
+}
+
+.form .input-group {
+  padding: 0 0 3.2rem;
+  position: relative;
+}
+
+.input-group label {
+  display: inline-block;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 0.6rem;
+}
+
+.input-group input {
+  width: 100%;
+  background: #fff;
+  border: 3px solid #b3b6bb;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.6rem;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.input-group input:focus {
+  border-color: #ff8f33;
+}
+
+.input-group.success input,
+.input-group.success input:focus {
+  border-color: #15803d;
+}
+
+.input-group.error input,
+.input-group.error input:focus {
+  border-color: #c2410c;
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  visibility: hidden;
+}
+
+.input-group.success .icon-success {
+  color: #15803d;
+  visibility: visible;
+}
+
+.input-group.error .icon-error {
+  color: #c2410c;
+  visibility: visible;
+}
+
+.input-group span {
+  position: absolute;
+  font-size: 1.4rem;
+  font-weight: 500;
+  bottom: 0.8rem;
+  left: 0.4rem;
+  visibility: hidden;
+  color: #c2410c;
+}
+
+.input-group.error span {
+  visibility: visible;
+}
+
+.form .btn-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.6rem;
+  margin-top: 1rem;
+}
+
+.btn-group button {
+  width: 50%;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.6rem;
+  color: #fff;
+  text-transform: uppercase;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-group button:active,
+.btn-group button:focus {
+  outline: none;
+}
+
+.btn-group .submit {
+  background: #00a28a;
+}
+
+.btn-group .submit:hover,
+.btn-group .submit:active {
+  background: #007661;
+}
+
+.btn-group .cancel {
+  background: #fff;
+  color: #333;
+  border-color: #eae5e0;
+}
+
+.btn-group .cancel:hover,
+.btn-group .cancel:active,
+.btn-group .cancel:focus {
+  border-color: #8b919a;
+}

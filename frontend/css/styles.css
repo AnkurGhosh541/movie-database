@@ -1,0 +1,362 @@
+/* FONTS */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Rammetto+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Bungee+Shade&display=swap");
+
+/* ICONS */
+@import url("https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+}
+
+html {
+  font-size: 62.5%;
+  scroll-behavior: smooth;
+}
+
+/* WRAPPER */
+
+.wrapper {
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scroll-padding-top: -10rem;
+  perspective: 10px;
+}
+
+/* SCROLLBAR */
+
+.wrapper::-webkit-scrollbar {
+  width: 0.5vw;
+  transition: 0.3s;
+}
+
+.wrapper::-webkit-scrollbar-track {
+  background: #ccc;
+}
+
+.wrapper::-webkit-scrollbar-thumb {
+  background: #666;
+}
+
+/* NAVBAR */
+
+.header {
+  position: fixed;
+  width: 100%;
+  padding: 2rem 10rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: transparent;
+  z-index: 999;
+  transition: all 0.2s;
+}
+
+.logo {
+  padding: 0.5rem 2rem;
+  background: #fff;
+  text-decoration: none;
+  font-family: "Rammetto One", sans-serif;
+  font-size: 3.6rem;
+  color: #ff8f33;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+.header.sticky {
+  padding: 1rem 8rem;
+  background: #ff8f33;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.2);
+}
+
+.header.sticky .logo {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  font-size: 2.6rem;
+  color: #fff;
+}
+
+.navbar .nav-links {
+  display: flex;
+  gap: 4.8rem;
+}
+
+.nav-link {
+  list-style: none;
+}
+
+.nav-link > a {
+  position: relative;
+  font-size: 2.2rem;
+  font-weight: 500;
+  letter-spacing: 2px;
+  text-decoration: none;
+  color: #fff;
+  transition: 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+.nav-link:not(.pages) > a::after {
+  content: "";
+  position: absolute;
+  height: 0.35rem;
+  width: 0;
+  background: #fff;
+  bottom: -2px;
+  left: 0;
+  transition: all 0.3s ease-in;
+}
+
+.pages {
+  position: relative;
+  margin-right: 2rem;
+}
+
+.pages .link-icon {
+  position: absolute;
+  top: 50%;
+  right: -70%;
+  transform: translateY(-50%);
+  transition: all 0.4s;
+  color: transparent;
+}
+
+.pages:hover .link-icon {
+  right: -40%;
+  color: #fff;
+}
+
+.pages.show .link-icon {
+  right: -40%;
+  color: #fff;
+  transform: rotateX(180deg) translateY(50%);
+}
+
+.dropdown {
+  display: none;
+  position: absolute;
+  top: 110%;
+  left: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.dropdown li {
+  list-style: none;
+}
+
+.dropdown li:hover {
+  background: #aaa;
+}
+
+.dropdown li a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0.8rem 2.5rem;
+  color: #333;
+  font-size: 1.8rem;
+  text-decoration: none;
+}
+
+.pages.show .dropdown {
+  display: inline;
+}
+
+.nav-link > a:hover::after,
+.nav-link > a:active::after {
+  width: 100%;
+}
+
+.header.sticky .nav-link > a {
+  font-size: 1.8rem;
+}
+
+.header.sticky .dropdown a {
+  font-size: 1.6rem;
+}
+
+.header.sticky .nav-link > a::after {
+  height: 0.25rem;
+}
+
+/* PARALLAX */
+
+.hero-section {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  margin-bottom: 5rem;
+  transform-style: preserve-3d;
+  z-index: -1;
+}
+
+.hero-section .hero-image {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  transform: translateZ(-10px) scale(2.015);
+}
+
+.hero-section .title {
+  position: absolute;
+  right: 18rem;
+  font-family: "Bungee Shade", sans-serif;
+  font-size: 10.4rem;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #fff;
+  text-align: right;
+}
+
+/* MAIN SECTION */
+
+.section-main {
+  background: #fff;
+}
+
+.section-main section {
+  padding: 5rem 2rem;
+}
+
+.section-main section p {
+  font-size: 1.8rem;
+  line-height: 1.7;
+}
+
+/* SEVICES SECTION */
+.section-main .section-services {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3.6rem;
+  padding: 15rem 20rem;
+}
+
+.service-title {
+  width: 100%;
+  font-size: 5.2rem;
+  font-weight: 600;
+  text-align: left;
+}
+
+.service-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-auto-rows: 30rem;
+  column-gap: 6.4rem;
+  row-gap: 9.6rem;
+}
+
+.card {
+  position: relative;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  transition: all 0.3s;
+}
+
+.card:hover {
+  transform: scale(1.02);
+}
+
+.card a {
+  text-decoration: none;
+  color: #fff;
+}
+
+.card img {
+  width: 100%;
+  height: 100%;
+}
+
+.card-title {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+}
+
+.card-title h3 {
+  font-size: 4.2rem;
+  text-transform: uppercase;
+  text-shadow: #e47c27 0 0 10px;
+}
+
+/* FOOTER */
+
+.footer {
+  background: #ccc;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 5rem 16rem;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.team-logo {
+  font-family: "Rammetto One", sans-serif;
+  font-size: 3.2rem;
+  color: #fff;
+  text-decoration: none;
+  background-color: #ff8f33;
+  padding: 0.8rem 2rem;
+  border-radius: 4px;
+}
+
+.team-details {
+  font-size: 1.6rem;
+  letter-spacing: 1.6px;
+  line-height: 1.7;
+  color: #333;
+}
+
+.members {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 3.6rem;
+  padding: 0 5rem;
+}
+
+.member {
+  font-size: 1.6rem;
+  line-height: 1.8;
+  letter-spacing: 1.6px;
+  color: #333;
+}
+
+.member h3 {
+  font-size: 1.8rem;
+  letter-spacing: 2px;
+}
+
+.member span {
+  font-weight: 500;
+}

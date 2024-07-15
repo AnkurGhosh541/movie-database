@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Movie Database</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <header class="header" id="header">
+      <a href="#footer" class="logo">T 3 A M</a>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li class="nav-link">
+            <a href="#">Home</a>
+          </li>
+          <li class="nav-link">
+            <a href="#services">Services</a>
+          </li>
+          <li class="nav-link">
+            <a href="#footer">About</a>
+          </li>
+          <li class="nav-link pages">
+            <a href="javascript:"
+              >Pages <i class="fa-solid fa-angle-down link-icon"></i
+            ></a>
+            <ul class="dropdown">
+              <li><a href="/production">Production</a></li>
+              <li><a href="/movie">Movie</a></li>
+              <li><a href="/director">Director</a></li>
+              <li><a href="/actor">Actor</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div class="wrapper">
+      <section class="hero-section">
+        <img
+          src="images/hero-bg.jpg"
+          alt="hero section background"
+          class="hero-image" />
+
+        <h1 class="title">The<br />Movie<br />Database</h1>
+      </section>
+
+      <section class="section-main">
+        <section class="section-services" id="services">
+          <h2 class="service-title">Services</h2>
+          <div class="service-grid">
+            <div class="card">
+              <a href="/production">
+                <img src="images/prod-card.jpg" alt="production card" />
+                <div class="card-title">
+                  <h3>Production</h3>
+                </div>
+              </a>
+            </div>
+            <div class="card">
+              <a href="/movie">
+                <img src="images/movie-card.jpg" alt="movie card" />
+                <div class="card-title">
+                  <h3>Movie</h3>
+                </div>
+              </a>
+            </div>
+            <div class="card">
+              <a href="/director">
+                <img src="images/director-card.jpg" alt="director card" />
+                <div class="card-title">
+                  <h3>Director</h3>
+                </div>
+              </a>
+            </div>
+            <div class="card">
+              <a href="/actor">
+                <img src="images/actor-card.jpg" alt="actor card" />
+                <div class="card-title">
+                  <h3>Actor</h3>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
+      </section>
+
+      <footer class="footer" id="footer">
+        <div class="team">
+          <a href="#" class="team-logo">T 3 A M</a>
+          <div class="team-details">
+            <p>Advanced DBMS Lab</p>
+            <p>Team 3</p>
+            <p>M.Sc semester II</p>
+          </div>
+        </div>
+
+        <div class="members">
+          <div class="member">
+            <h3>Ankur Ghosh</h3>
+            <p>Stream: <span>M.Sc</span></p>
+            <p>Dept: <span>CSE</span></p>
+            <p>Roll: <span>29</span></p>
+          </div>
+
+          <div class="member">
+            <h3>Kausiki Das</h3>
+            <p>Stream: <span>M.Sc</span></p>
+            <p>Dept: <span>CSE</span></p>
+            <p>Roll: <span>11</span></p>
+          </div>
+        </div>
+      </footer>
+    </div>
+
+    <script>
+      const wrapper = document.querySelector(".wrapper");
+      wrapper.addEventListener("scroll", e => {
+        const header = document.getElementById("header");
+
+        header.classList.toggle("sticky", wrapper.scrollTop > 20);
+
+        const logo = document.querySelector(".logo");
+        if (header.classList.contains("sticky")) {
+          logo.textContent = "The Movie DB";
+          logo.setAttribute("href", "#");
+        } else {
+          logo.textContent = "T 3 A M";
+          logo.setAttribute("href", "#footer");
+        }
+      });
+
+      const allLinks = document.querySelectorAll("a:link");
+
+      allLinks.forEach(link => {
+        link.addEventListener("click", e => {
+          e.preventDefault();
+          const href = link.getAttribute("href");
+
+          if (href === "#") {
+            wrapper.scrollTo({
+              top: 0,
+              behavior: "smooth",
+            });
+          }
+
+          if (href !== "#" && href.startsWith("#")) {
+            const sectionEl = document.querySelector(href);
+            sectionEl.scrollIntoView({ behavior: "smooth" });
+          }
+
+          if (href.startsWith("/")) {
+            window.location.assign(href);
+          }
+        });
+      });
+
+      const pages = document.querySelector(".pages");
+      document.addEventListener("click", e => {
+        if (e.target === pages.firstElementChild) {
+          pages.classList.toggle("show");
+        } else {
+          pages.classList.remove("show");
+        }
+      });
+    </script>
+  </body>
+</html>

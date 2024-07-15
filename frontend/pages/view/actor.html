@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Movie Database</title>
+    <link rel="stylesheet" href="../../css/styles-pages.css" />
+  </head>
+  <body>
+    <header class="header" id="header">
+      <a href="/" class="logo">The Movie DB</a>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li class="nav-link">
+            <a href="#">Home</a>
+          </li>
+          <li class="nav-link">
+            <a href="#footer">About</a>
+          </li>
+          <li class="nav-link pages">
+            <a href="javascript:"
+              >Pages <i class="fa-solid fa-angle-down link-icon"></i
+            ></a>
+            <ul class="dropdown">
+              <li><a href="/production">Production</a></li>
+              <li><a href="/movie">Movie</a></li>
+              <li><a href="/director">Director</a></li>
+              <li><a href="/actor">Actor</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="top-panel">
+        <h1 class="title">Actors</h1>
+        <div class="input-group">
+          <input type="text" name="search" id="search" placeholder="search" />
+          <a href="/actor/insert" class="btn btn-insert">+ Insert</a>
+        </div>
+      </section>
+      <div class="divider"></div>
+      <section class="view-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>Sl.</th>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Date of Birth</th>
+              <th>Movies (Role)</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer" id="footer">
+      <div class="team">
+        <a href="#" class="team-logo">T 3 A M</a>
+        <div class="team-details">
+          <p>Advanced DBMS Lab</p>
+          <p>Team 3</p>
+          <p>M.Sc semester II</p>
+        </div>
+      </div>
+
+      <div class="members">
+        <div class="member">
+          <h3>Ankur Ghosh</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>29</span></p>
+        </div>
+
+        <div class="member">
+          <h3>Kausiki Das</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>11</span></p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      let data;
+
+      const getData = async function () {
+        let production = [];
+        try {
+          const res = await fetch("/actor/details");
+          const data = await res.json();
+          production = data;
+        } catch (error) {}
+
+        return production;
+      };
+
+      const setMovie = async function (id, i) {
+        try {
+          const res = await fetch("/appearance/" + id);
+          const appearances = await res.json();
+          const movieEl = document.getElementById("movie-" + i);
+          let text = "";
+          appearances.forEach(appearance => {
+            text = text.concat(
+              `${appearance.title} (${appearance.role})<br />`
+            );
+          });
+          text = text.substring(0, text.length - 6);
+          movieEl.innerHTML = text;
+        } catch (error) {}
+      };
+
+      const buildTable = function (data) {
+        const tbody = document.getElementById("tbody");
+        tbody.innerHTML = "";
+        data.forEach((actor, i) => {
+          console.log(typeof actor.dob);
+          let html = `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${actor.fname}</td>
+                <td>${actor.lname}</td>
+                <td>${new Date(actor.dob).toLocaleString("en-IN", {
+                  day: "numeric",
+                  month: "short",
+                  year: "numeric",
+                })}</td>
+                <td id="movie-${i}">%MOVIE%</td>
+                <td>
+                  <a href="#"><i class="fa-solid fa-eye view-icon"></i></a>
+                  <a href="#"
+                    ><i class="fa-solid fa-pen-to-square edit-icon"></i
+                  ></a>
+                  <a href="#"><i class="fa-solid fa-trash delete-icon"></i></a>
+                </td>
+              </tr>
+            `;
+
+          tbody.insertAdjacentHTML("beforeend", html);
+
+          setMovie(actor.act_id, i);
+        });
+      };
+
+      const init = async function () {
+        data = await getData();
+        buildTable(data);
+      };
+
+      init();
+
+      const getSearchData = function (search) {
+        console.log(data);
+        const filteredData = data.filter(actor => {
+          const fname = actor.fname.toLowerCase();
+          const mname = actor.mname.toLowerCase();
+          const lname = actor.lname.toLowerCase();
+          const newSearch = search.toLowerCase();
+
+          return (
+            fname.startsWith(newSearch) ||
+            mname.startsWith(newSearch) ||
+            lname.startsWith(newSearch)
+          );
+        });
+
+        return filteredData;
+      };
+
+      const search = document.getElementById("search");
+      search.addEventListener("keyup", e => {
+        const val = search.value;
+        if (val != "") {
+          const newData = getSearchData(val);
+          buildTable(newData);
+        } else {
+          buildTable(data);
+        }
+      });
+
+      const pages = document.querySelector(".pages");
+      document.addEventListener("click", e => {
+        if (e.target === pages.firstElementChild) {
+          pages.classList.toggle("show");
+        } else {
+          pages.classList.remove("show");
+        }
+      });
+    </script>
+  </body>
+</html>

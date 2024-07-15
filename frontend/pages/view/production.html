@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Movie Database</title>
+    <link rel="stylesheet" href="../../css/styles-pages.css" />
+  </head>
+
+  <body>
+    <header class="header" id="header">
+      <a href="/" class="logo">The Movie DB</a>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li class="nav-link">
+            <a href="#">Home</a>
+          </li>
+          <li class="nav-link">
+            <a href="#footer">About</a>
+          </li>
+          <li class="nav-link pages">
+            <a href="javascript:"
+              >Pages <i class="fa-solid fa-angle-down link-icon"></i
+            ></a>
+            <ul class="dropdown">
+              <li><a href="/production">Production</a></li>
+              <li><a href="/movie">Movie</a></li>
+              <li><a href="/director">Director</a></li>
+              <li><a href="/actor">Actor</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="top-panel">
+        <h1 class="title">Production Company</h1>
+        <div class="input-group">
+          <input type="text" name="search" id="search" placeholder="search" />
+          <a href="/production/insert" class="btn btn-insert">+ Insert</a>
+        </div>
+      </section>
+      <div class="divider"></div>
+      <section class="view-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>Sl.</th>
+              <th>Name</th>
+              <th>City</th>
+              <th>State</th>
+              <th>Country</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </section>
+      <dialog class="modal-delete">
+        <form action="">
+          <p>This will delete all items related to this production company.</p>
+          <p><b>Are you sure?</b></p>
+          <div class="modal-btn">
+            <button data-id="" class="btn-delete">delete</button>
+            <button class="btn-cancel" formmethod="dialog">cancel</button>
+          </div>
+        </form>
+      </dialog>
+    </main>
+
+    <footer class="footer" id="footer">
+      <div class="team">
+        <a href="#" class="team-logo">T 3 A M</a>
+        <div class="team-details">
+          <p>Advanced DBMS Lab</p>
+          <p>Team 3</p>
+          <p>M.Sc semester II</p>
+        </div>
+      </div>
+
+      <div class="members">
+        <div class="member">
+          <h3>Ankur Ghosh</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>29</span></p>
+        </div>
+
+        <div class="member">
+          <h3>Kausiki Das</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>11</span></p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      let data;
+
+      const getData = async function () {
+        let production = [];
+        try {
+          const res = await fetch("/production/details");
+          const data = await res.json();
+          production = data;
+        } catch (error) {}
+
+        return production;
+      };
+
+      const buildTable = function (data) {
+        const tbody = document.getElementById("tbody");
+        tbody.innerHTML = "";
+        data.forEach((prod, i) => {
+          const html = `
+              <tr>
+                <td>${i + 1}</td>
+                <td>${prod.name}</td>
+                <td>${prod.city}</td>
+                <td>${prod.state}</td>
+                <td>${prod.country}</td>
+                <td>
+                  <a class="view" data-id="${
+                    prod.p_id
+                  }"><i class="fa-solid fa-eye view-icon"></i></a>
+                  <a class="edit" data-id="${
+                    prod.p_id
+                  }"><i class="fa-solid fa-pen-to-square edit-icon"></i></a>
+                  <a class="delete" data-id="${
+                    prod.p_id
+                  }"><i class="fa-solid fa-trash delete-icon"></i></a>
+                </td>
+              </tr>
+            `;
+
+          tbody.insertAdjacentHTML("beforeend", html);
+        });
+      };
+
+      const init = async function () {
+        data = await getData();
+        buildTable(data);
+
+        const deleteLinks = document.querySelectorAll("a.delete");
+        deleteLinks.forEach(link => {
+          link.addEventListener("click", e => {
+            e.preventDefault();
+            const id = link.dataset.id;
+            document
+              .querySelector(".modal-delete form")
+              .setAttribute("action", "/production/delete/" + id);
+            document.querySelector(".modal-delete").showModal();
+          });
+        });
+      };
+
+      init();
+
+      const getSearchData = function (search) {
+        const filteredData = data.filter(prod => {
+          const name = prod.name.toLowerCase();
+          const newSearch = search.toLowerCase();
+
+          return name.startsWith(newSearch);
+        });
+
+        return filteredData;
+      };
+
+      const search = document.getElementById("search");
+      search.addEventListener("keyup", e => {
+        const val = search.value;
+        if (val != "") {
+          const newData = getSearchData(val);
+          buildTable(newData);
+        } else {
+          buildTable(data);
+        }
+      });
+
+      const pages = document.querySelector(".pages");
+      document.addEventListener("click", e => {
+        if (e.target === pages.firstElementChild) {
+          pages.classList.toggle("show");
+        } else {
+          pages.classList.remove("show");
+        }
+      });
+
+      const modalCloseBtn = document.querySelector(".btn-cancel");
+      modalCloseBtn.addEventListener("click", e => {
+        document.querySelector(".modal-delete").close();
+      });
+
+      const modalDeleteBtn = document.querySelector(".btn-delete");
+      modalDeleteBtn.addEventListener("click", e => {
+        const id = modalDeleteBtn.dataset.id;
+        console.log(id);
+      });
+    </script>
+  </body>
+</html>

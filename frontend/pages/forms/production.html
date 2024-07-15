@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Movie Database</title>
+    <link rel="stylesheet" href="../../css/styles-forms.css" />
+  </head>
+
+  <body>
+    <div class="container">
+      <header><h2 class="title">Add Production Company</h2></header>
+      <form action="/production" method="post" class="form" id="form">
+        <div class="input-group">
+          <label for="name">Name</label>
+          <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="XYZ Production Ltd." />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="city">City</label>
+          <input type="text" name="city" id="city" placeholder="Las Vegas" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="state">State</label>
+          <input type="text" name="state" id="state" placeholder="Nevada" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="input-group">
+          <label for="country">Country</label>
+          <input type="text" name="country" id="country" placeholder="USA" />
+          <span>Error Message</span>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="submit">Submit</button>
+          <button type="button" class="cancel">Cancel</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("form");
+      const name = document.getElementById("name");
+      const city = document.getElementById("city");
+      const state = document.getElementById("state");
+      const country = document.getElementById("country");
+      const cancelBtn = document.querySelector(".cancel");
+
+      cancelBtn.addEventListener("click", e => {
+        window.location.href = "/production";
+      });
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        if (checkInputs()) {
+          form.submit();
+        }
+      });
+
+      function checkInputs() {
+        const nameValue = name.value.trim();
+        const cityValue = city.value.trim();
+        const stateValue = state.value.trim();
+        const countryValue = country.value.trim();
+        const error = {
+          name: false,
+          city: false,
+          state: false,
+          country: false,
+        };
+
+        if (nameValue === "") {
+          setErrorFor(name, "This field can not be empty");
+          error.name = true;
+        } else {
+          setSuccessFor(name);
+          error.name = false;
+        }
+
+        if (cityValue === "") {
+          setErrorFor(city, "This field can not be empty");
+          error.city = true;
+        } else {
+          setSuccessFor(city);
+          error.city = false;
+        }
+
+        if (stateValue === "") {
+          setErrorFor(state, "This field can not be empty");
+          error.state = true;
+        } else {
+          setSuccessFor(state);
+          error.state = false;
+        }
+
+        if (countryValue === "") {
+          setErrorFor(country, "This field can not be empty");
+          error.country = true;
+        } else {
+          setSuccessFor(country);
+          error.country = false;
+        }
+
+        return !error.name && !error.city && !error.state && !error.country;
+      }
+
+      function setErrorFor(element, message) {
+        element.nextElementSibling.textContent = message;
+        element.parentElement.classList.remove("success");
+        element.parentElement.classList.add("error");
+      }
+
+      function setSuccessFor(element) {
+        element.parentElement.classList.remove("error");
+        element.parentElement.classList.add("success");
+      }
+    </script>
+  </body>
+</html>
