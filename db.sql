@@ -44,7 +44,6 @@ create table appears (
 create table only_actor (
     a_id varchar(36),
     fname varchar(25) not null,
-    mname varchar(50),
     lname varchar(25) not null,
     dob date not null,
     act_id varchar(36) not null,
@@ -55,7 +54,6 @@ create table only_actor (
 create table director (
     d_id varchar(36),
     fname varchar(25) not null,
-    mname varchar(50),
     lname varchar(25) not null,
     dob date not null,
     act_id varchar(36),
