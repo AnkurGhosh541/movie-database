@@ -54,14 +54,14 @@
             name="length"
             id="length"
             min="0"
-            placeholder="120" />
+            placeholder="194" />
           <span>Error Message</span>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
         <div class="input-group">
           <label for="genre">Genre(s)</label>
-          <select name="genre" id="genre"></select>
+          <select name="genre" id="genre" multiple></select>
           <span>Error Message</span>
           <i class="fa-solid fa-chevron-down icon-arrow"></i>
           <i class="fa-solid fa-circle-check icon-success"></i>
@@ -69,10 +69,10 @@
         </div>
         <div class="input-group">
           <label for="production">Produced By</label>
-          <select class="select-box" name="production" id="production">
+          <select class="select-prod" name="production" id="production">
             <ul class="options">
               <li>
-                <option value="#">Select an option</option>
+                <option value="">Select an option</option>
               </li>
               <li>
                 <option value="Hello">Hello</option>
@@ -113,9 +113,26 @@
 
       form.addEventListener("submit", e => {
         e.preventDefault();
-        if (checkInputs()) {
-          form.submit();
-        }
+        // if (checkInputs()) {
+        //   form.submit();
+        // }
+        const formData = new FormData(form);
+        formData.append("genre", "1");
+        formData.append("genre", "2");
+        formData.append("genre", "3");
+
+        fetch("/movie", {
+          method: "POST",
+          body: formData,
+        });
+        window.location.assign("/movie");
+
+        // fetch("https://httpbin.org/post", {
+        //   method: "POST",
+        //   body: formData,
+        // })
+        //   .then(res => res.json())
+        //   .then(data => console.log(data));
       });
 
       function checkInputs() {
@@ -125,46 +142,47 @@
         const lengthValue = length.value.trim();
         const genreValue = genre.value.trim();
         const productionValue = production.value.trim();
+
         const error = {
-          name: false,
-          city: false,
-          state: false,
-          country: false,
+          title: false,
+          year: false,
+          plot: false,
+          length: false,
         };
 
-        if (nameValue === "") {
-          setErrorFor(name, "This field can not be empty");
-          error.name = true;
+        if (titleValue === "") {
+          setErrorFor(title, "This field can not be empty");
+          error.title = true;
         } else {
-          setSuccessFor(name);
-          error.name = false;
+          setSuccessFor(title);
+          error.title = false;
         }
 
-        if (cityValue === "") {
-          setErrorFor(city, "This field can not be empty");
-          error.city = true;
+        if (yearValue === "") {
+          setErrorFor(year, "This field can not be empty");
+          error.year = true;
         } else {
-          setSuccessFor(city);
-          error.city = false;
+          setSuccessFor(year);
+          error.year = false;
         }
 
-        if (stateValue === "") {
-          setErrorFor(state, "This field can not be empty");
-          error.state = true;
+        if (plotValue === "") {
+          setErrorFor(plot, "This field can not be empty");
+          error.plot = true;
         } else {
-          setSuccessFor(state);
-          error.state = false;
+          setSuccessFor(plot);
+          error.plot = false;
         }
 
-        if (countryValue === "") {
-          setErrorFor(country, "This field can not be empty");
-          error.country = true;
+        if (lengthValue === "") {
+          setErrorFor(length, "This field can not be empty");
+          error.length = true;
         } else {
-          setSuccessFor(country);
-          error.country = false;
+          setSuccessFor(length);
+          error.length = false;
         }
 
-        return !error.name && !error.city && !error.state && !error.country;
+        return !error.title && !error.year && !error.plot && !error.length;
       }
 
       function setErrorFor(element, message) {
@@ -177,6 +195,24 @@
         element.parentElement.classList.remove("error");
         element.parentElement.classList.add("success");
       }
+
+      production.addEventListener("click", e => {
+        production.parentElement.classList.toggle("open");
+      });
+
+      genre.addEventListener("click", e => {
+        genre.parentElement.classList.toggle("open");
+      });
+
+      document.addEventListener("click", e => {
+        if (e.target != production) {
+          production.parentElement.classList.remove("open");
+        }
+
+        if (e.target != genre) {
+          genre.parentElement.classList.remove("open");
+        }
+      });
     </script>
   </body>
 </html>

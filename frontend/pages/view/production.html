@@ -105,7 +105,9 @@
           const res = await fetch("/production/details");
           const data = await res.json();
           production = data;
-        } catch (error) {}
+        } catch (error) {
+          throw error;
+        }
 
         return production;
       };
@@ -140,20 +142,24 @@
       };
 
       const init = async function () {
-        data = await getData();
-        buildTable(data);
+        try {
+          data = await getData();
+          await buildTable(data);
 
-        const deleteLinks = document.querySelectorAll("a.delete");
-        deleteLinks.forEach(link => {
-          link.addEventListener("click", e => {
-            e.preventDefault();
-            const id = link.dataset.id;
-            document
-              .querySelector(".modal-delete form")
-              .setAttribute("action", "/production/delete/" + id);
-            document.querySelector(".modal-delete").showModal();
+          const deleteLinks = document.querySelectorAll("a.delete");
+          deleteLinks.forEach(link => {
+            link.addEventListener("click", e => {
+              e.preventDefault();
+              const id = link.dataset.id;
+              document
+                .querySelector(".modal-delete form")
+                .setAttribute("action", "/production/delete/" + id);
+              document.querySelector(".modal-delete").showModal();
+            });
           });
-        });
+        } catch (error) {
+          window.location.assign("/error");
+        }
       };
 
       init();

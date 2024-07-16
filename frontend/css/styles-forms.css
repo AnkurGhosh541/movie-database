@@ -198,6 +198,13 @@ header {
 .input-group .icon-arrow {
   right: 2rem;
   visibility: visible;
+  cursor: pointer;
+  transition: all 0.2s;
+  pointer-events: none;
+}
+
+.input-group.open .icon-arrow {
+  transform: translateY(-50%) rotateX(180deg);
 }
 
 .form .btn-group {

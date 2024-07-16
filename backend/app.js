@@ -3,6 +3,7 @@ const crypto = require("crypto");
 
 const express = require("express");
 const bodyParser = require("body-parser");
+const multer = require("multer");
 
 const db = require("./db");
 
@@ -13,7 +14,9 @@ const app = express();
 const publicRoot = path.join(__dirname, "../frontend");
 app.use(express.static(publicRoot));
 
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(multer().none());
 
 // VIEW PAGES
 
@@ -74,10 +77,10 @@ app.get("/actor/insert", (req, res) => {
 // GET DATA
 
 app.get("/production/details", (req, res) => {
-  const sqlGetProd = "select * from production_company";
+  const sqlGetProd = "select * from production_compan";
   db.query(sqlGetProd, (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
 
     res.json(result);
@@ -89,7 +92,7 @@ app.get("/movie/details", (req, res) => {
     "select m_id, title, release_yr as year, plot_outline as plot, length, name as production from movie natural join production_company";
   db.query(sqlGetProd, (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
 
     res.json(result);
@@ -100,7 +103,7 @@ app.get("/director/details", (req, res) => {
   const sqlGetDirector = "select * from director";
   db.query(sqlGetDirector, (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
 
     res.json(result);
@@ -111,7 +114,7 @@ app.get("/actor/details", (req, res) => {
   const sqlGetActor = "select * from only_actor";
   db.query(sqlGetActor, (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
 
     res.json(result);
@@ -124,7 +127,7 @@ app.get("/genre/:id", (req, res) => {
   const sqlGetGenre = "select genre from genre where m_id=?";
   db.query(sqlGetGenre, [req.params.id], (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
     res.json(result);
   });
@@ -135,7 +138,7 @@ app.get("/directs/:id", (req, res) => {
     "select title from directs natural join movie where d_id=?";
   db.query(sqlGetDirected, [req.params.id], (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
     res.json(result);
   });
@@ -146,7 +149,7 @@ app.get("/appearance/:id", (req, res) => {
     "select title, role from appears natural join movie where act_id=?";
   db.query(sqlGetAppearance, [req.params.id], (err, result) => {
     if (err) {
-      throw err;
+      return res.sendStatus(400);
     }
     res.json(result);
   });
@@ -161,7 +164,7 @@ app.post("/production", (req, res) => {
   db.beginTransaction(err => {
     if (err) {
       return db.rollback(() => {
-        return res.redirect("/pages/error/400.html");
+        return res.sendStatus(400);
       });
     }
 
@@ -169,14 +172,14 @@ app.post("/production", (req, res) => {
     db.query(sqlInsertProd, [id, name, city, state, country], (err, result) => {
       if (err) {
         db.rollback(() => {
-          return res.redirect("/pages/error/400.html");
+          return res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
           db.rollback(() => {
-            return res.redirect("/pages/error/400.html");
+            return res.sendStatus(400);
           });
         }
       });
@@ -186,9 +189,7 @@ app.post("/production", (req, res) => {
   res.redirect("/production");
 });
 
-app.post("/movie", (req, res) => {
-  res.redirect("/movie");
-});
+app.post("/movie", (req, res) => {});
 
 // DELETE DATA
 
@@ -198,7 +199,7 @@ app.get("/production/delete/:id", (req, res) => {
   db.beginTransaction(err => {
     if (err) {
       db.rollback(() => {
-        return res.redirect("/pages/error/400.html");
+        return res.sendStatus(400);
       });
     }
 
@@ -206,22 +207,28 @@ app.get("/production/delete/:id", (req, res) => {
     db.query(sqlDeleteProd, [id], (err, result) => {
       if (err) {
         db.rollback(() => {
-          return res.redirect("/pages/error/400.html");
+          return res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
           db.rollback(() => {
-            return res.redirect("/pages/error/400.html");
+            return res.sendStatus(400);
           });
         }
       });
     });
-    res.redirect("/production");
   });
 
   res.redirect("/production");
+});
+
+// ERROR ROUTE
+app.get("/error", (req, res) => {
+  res.sendFile("pages/error/400.html", {
+    root: publicRoot,
+  });
 });
 
 // START SERVER
