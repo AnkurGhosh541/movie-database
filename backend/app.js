@@ -90,9 +90,9 @@ app.get("/production/details", (req, res) => {
 });
 
 app.get("/movie/details", (req, res) => {
-  const sqlGetProd =
-    "select m_id, title, release_yr as year, plot_outline as plot, length, name as production from movie natural join production_company";
-  db.query(sqlGetProd, (err, result) => {
+  const sqlGetMovie =
+    "select m_id, title, release_yr as year, plot_outline as plot, length, name as production from movie m join production_company p on m.p_id=p.p_id";
+  db.query(sqlGetMovie, (err, result) => {
     if (err) {
       return res.sendStatus(400);
     }
@@ -148,7 +148,7 @@ app.get("/directs/:id", (req, res) => {
 
 app.get("/appearance/:id", (req, res) => {
   const sqlGetAppearance =
-    "select title, role from appears natural join movie where act_id=?";
+    "select title, role from appears join movie on appears.m_id=movie.m_id where act_id=?";
   db.query(sqlGetAppearance, [req.params.id], (err, result) => {
     if (err) {
       return res.sendStatus(400);

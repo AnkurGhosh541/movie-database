@@ -73,8 +73,8 @@
             </div>
           </div>
           <span>Error Message</span>
-          <i class="fa-solid fa-circle-check icon-success"></i>
-          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          <i class="fa-solid fa-circle-check icon-success icon-select"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error icon-select"></i>
         </div>
 
         <div class="input-group">
@@ -85,21 +85,12 @@
               <i class="fa-solid fa-chevron-down icon-arrow"></i>
             </div>
             <ul class="options-single" id="prod-list">
-              <li><span class="option">Marvel</span></li>
-              <li><span class="option">DC</span></li>
-              <li><span class="option">20th century fox</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
-              <li><span class="option">Paramount</span></li>
+              <!-- <li><span class="option">Marvel</span></li> -->
             </ul>
           </div>
           <span>Error Message</span>
-          <i class="fa-solid fa-circle-check icon-success"></i>
-          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          <i class="fa-solid fa-circle-check icon-success icon-select"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error icon-select"></i>
         </div>
 
         <div class="btn-group">
@@ -122,8 +113,13 @@
 
       form.addEventListener("submit", e => {
         e.preventDefault();
+        const formData = new FormData(form);
+
         if (checkInputs()) {
-          const formData = new FormData(form);
+          const selectedProduction =
+            document.querySelector(".selected").dataset.prodId;
+          formData.append("production", selectedProduction);
+          console.log(selectedProduction);
         }
       });
 
@@ -137,12 +133,15 @@
         const yearValue = year.value.trim();
         const plotValue = plot.value.trim();
         const lengthValue = length.value.trim();
+        const selectedProduction = document.querySelector(".selected");
 
         const error = {
           title: false,
           year: false,
           plot: false,
           length: false,
+          genre: false,
+          production: false,
         };
 
         if (titleValue === "") {
@@ -177,7 +176,15 @@
           error.length = false;
         }
 
-        return !error.title && !error.year && !error.plot && !error.length;
+        if (selectedProduction == null) {
+          setErrorFor(production.parentElement, "This field can not be empty");
+          error.production = true;
+        } else {
+          setSuccessFor(production.parentElement);
+          error.production = false;
+        }
+
+        return !Object.values(error).includes(true);
       }
 
       function setErrorFor(element, message) {
@@ -202,13 +209,13 @@
         false
       );
 
-      production.addEventListener("click", e => {
+      const toggleOpenProd = () =>
         production.parentElement.classList.toggle("open");
-      });
+      production.addEventListener("click", e => toggleOpenProd());
 
-      genre.addEventListener("click", e => {
-        genre.classList.toggle("open");
-      });
+      const toggleOpenGenre = () =>
+        genre.parentElement.classList.toggle("open");
+      genre.addEventListener("click", e => toggleOpenGenre());
 
       document.addEventListener("click", e => {
         if (e.target != production) {
@@ -216,9 +223,52 @@
         }
 
         if (e.target != genre) {
-          genre.classList.remove("open");
+          genre.parentElement.classList.remove("open");
         }
       });
+
+      async function getProduction() {
+        try {
+          const res = await fetch("/production/details");
+          const data = await res.json();
+          return data;
+        } catch (error) {
+          throw error;
+        }
+      }
+
+      async function init() {
+        try {
+          const prodData = await getProduction();
+          const prodList = document.getElementById("prod-list");
+
+          if (prodData.length == 0) {
+            production.firstElementChild.textContent =
+              "No production house available";
+            production.removeEventListener("click", toggleOpenProd);
+          } else {
+            prodData.forEach(prod => {
+              const html = `<li data-prod-id="${prod.p_id}"><span class="option">${prod.name}</span></li>`;
+              prodList.insertAdjacentHTML("beforeend", html);
+            });
+          }
+
+          const prodOptions = document.querySelectorAll("#prod-list li");
+          prodOptions.forEach(option => {
+            option.addEventListener("click", e => {
+              prodOptions.forEach(opt => {
+                opt.classList.remove("selected");
+              });
+              option.classList.add("selected");
+              production.firstElementChild.textContent =
+                option.firstElementChild.textContent;
+              production.firstElementChild.style.color = "#333";
+            });
+          });
+        } catch (error) {}
+      }
+
+      init();
     </script>
   </body>
 </html>

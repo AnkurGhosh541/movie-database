@@ -17,6 +17,10 @@ html {
   scroll-behavior: smooth;
 }
 
+html::-webkit-scrollbar {
+  display: none;
+}
+
 body {
   min-height: 100vh;
   display: flex;
@@ -84,9 +88,15 @@ header {
   visibility: hidden;
 }
 
-.input-group i.icon-textarea {
+.input-group i.icon-textarea,
+.input-group i.icon-select {
   top: 5.5rem;
   right: 1.5rem;
+}
+
+.input-group i.icon-select {
+  top: 5.5rem;
+  right: 1rem;
 }
 
 .input-group.success .icon-success {
@@ -147,6 +157,13 @@ header {
   border-color: #c2410c;
 }
 
+.input-group.success input[type="number"]::-webkit-inner-spin-button,
+.input-group.error input[type="number"]::-webkit-inner-spin-button,
+.input-group.success input[type="number"]::-webkit-outer-spin-button,
+.input-group.error input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+}
+
 .input-group textarea {
   width: 100%;
   background: #fff;
@@ -196,6 +213,7 @@ header {
 
 .select .select-text {
   color: #757575;
+  user-select: none;
   pointer-events: none;
 }
 
