@@ -10,7 +10,7 @@
   <body>
     <div class="container">
       <header><h2 class="title">Add Production Company</h2></header>
-      <form action="/production" method="post" class="form" id="form">
+      <form class="form" id="form">
         <div class="input-group">
           <label for="name">Name</label>
           <input
@@ -52,28 +52,36 @@
 
     <script>
       const form = document.getElementById("form");
-      const name = document.getElementById("name");
-      const city = document.getElementById("city");
-      const state = document.getElementById("state");
-      const country = document.getElementById("country");
-      const cancelBtn = document.querySelector(".cancel");
 
+      const cancelBtn = document.querySelector(".cancel");
       cancelBtn.addEventListener("click", e => {
         window.location.href = "/production";
       });
 
       form.addEventListener("submit", e => {
         e.preventDefault();
-        if (checkInputs()) {
-          form.submit();
+        const formData = new FormData(form);
+        if (checkInputs(formData)) {
+          fetch("/production", {
+            method: "POST",
+            body: formData,
+          })
+            .then(res => window.location.assign("/production"))
+            .catch(err => window.location.assign("/error"));
         }
       });
 
-      function checkInputs() {
+      function checkInputs(formData) {
+        const name = document.getElementById("name");
+        const city = document.getElementById("city");
+        const state = document.getElementById("state");
+        const country = document.getElementById("country");
+
         const nameValue = name.value.trim();
         const cityValue = city.value.trim();
         const stateValue = state.value.trim();
         const countryValue = country.value.trim();
+
         const error = {
           name: false,
           city: false,

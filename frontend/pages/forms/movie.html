@@ -10,7 +10,8 @@
   <body>
     <div class="container">
       <header><h2 class="title">Add Movie</h2></header>
-      <form action="/movie" method="post" class="form" id="form">
+
+      <form class="form" id="form">
         <div class="input-group">
           <label for="title">Title</label>
           <input
@@ -22,6 +23,7 @@
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
+
         <div class="input-group">
           <label for="year">Year of Release</label>
           <input
@@ -35,6 +37,7 @@
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
+
         <div class="input-group">
           <label for="plot">Plot Outline</label>
           <textarea
@@ -47,6 +50,7 @@
           <i
             class="fa-solid fa-circle-exclamation icon-error icon-textarea"></i>
         </div>
+
         <div class="input-group">
           <label for="length">Length in minutes</label>
           <input
@@ -59,37 +63,45 @@
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
+
         <div class="input-group">
           <label for="genre">Genre(s)</label>
-          <select name="genre" id="genre" multiple></select>
+          <div class="select-box">
+            <div class="select" id="genre" multiple>
+              <span class="select-text">Please select the genre(s)</span>
+              <i class="fa-solid fa-chevron-down icon-arrow"></i>
+            </div>
+          </div>
           <span>Error Message</span>
-          <i class="fa-solid fa-chevron-down icon-arrow"></i>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
+
         <div class="input-group">
           <label for="production">Produced By</label>
-          <select class="select-prod" name="production" id="production">
-            <ul class="options">
-              <li>
-                <option value="">Select an option</option>
-              </li>
-              <li>
-                <option value="Hello">Hello</option>
-              </li>
-              <li>
-                <option value="Hi">Hi</option>
-              </li>
-              <li>
-                <option value="Bye">Bye</option>
-              </li>
+          <div class="select-box">
+            <div class="select" id="production">
+              <span class="select-text">Please select a producer</span>
+              <i class="fa-solid fa-chevron-down icon-arrow"></i>
+            </div>
+            <ul class="options-single" id="prod-list">
+              <li><span class="option">Marvel</span></li>
+              <li><span class="option">DC</span></li>
+              <li><span class="option">20th century fox</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
+              <li><span class="option">Paramount</span></li>
             </ul>
-          </select>
+          </div>
           <span>Error Message</span>
-          <i class="fa-solid fa-chevron-down icon-arrow"></i>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
+
         <div class="btn-group">
           <button type="submit" class="submit">Submit</button>
           <button type="button" class="cancel">Cancel</button>
@@ -99,49 +111,32 @@
 
     <script>
       const form = document.getElementById("form");
-      const title = document.getElementById("title");
-      const year = document.getElementById("year");
-      const plot = document.getElementById("plot");
-      const length = document.getElementById("length");
+
       const genre = document.getElementById("genre");
       const production = document.getElementById("production");
-      const cancelBtn = document.querySelector(".cancel");
 
+      const cancelBtn = document.querySelector(".cancel");
       cancelBtn.addEventListener("click", e => {
         window.location.href = "/movie";
       });
 
       form.addEventListener("submit", e => {
         e.preventDefault();
-        // if (checkInputs()) {
-        //   form.submit();
-        // }
-        const formData = new FormData(form);
-        formData.append("genre", "1");
-        formData.append("genre", "2");
-        formData.append("genre", "3");
-
-        fetch("/movie", {
-          method: "POST",
-          body: formData,
-        });
-        window.location.assign("/movie");
-
-        // fetch("https://httpbin.org/post", {
-        //   method: "POST",
-        //   body: formData,
-        // })
-        //   .then(res => res.json())
-        //   .then(data => console.log(data));
+        if (checkInputs()) {
+          const formData = new FormData(form);
+        }
       });
 
       function checkInputs() {
+        const title = document.getElementById("title");
+        const year = document.getElementById("year");
+        const plot = document.getElementById("plot");
+        const length = document.getElementById("length");
+
         const titleValue = title.value.trim();
         const yearValue = year.value.trim();
         const plotValue = plot.value.trim();
         const lengthValue = length.value.trim();
-        const genreValue = genre.value.trim();
-        const productionValue = production.value.trim();
 
         const error = {
           title: false,
@@ -196,12 +191,23 @@
         element.parentElement.classList.add("success");
       }
 
+      const plot = document.getElementById("plot");
+      plot.style.height = plot.scrollHeight + 10 + "px";
+      plot.addEventListener(
+        "input",
+        function (e) {
+          this.style.height = "auto";
+          this.style.height = this.scrollHeight + 10 + "px";
+        },
+        false
+      );
+
       production.addEventListener("click", e => {
         production.parentElement.classList.toggle("open");
       });
 
       genre.addEventListener("click", e => {
-        genre.parentElement.classList.toggle("open");
+        genre.classList.toggle("open");
       });
 
       document.addEventListener("click", e => {
@@ -210,7 +216,7 @@
         }
 
         if (e.target != genre) {
-          genre.parentElement.classList.remove("open");
+          genre.classList.remove("open");
         }
       });
     </script>

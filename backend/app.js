@@ -1,3 +1,5 @@
+// IMPORT MODULES
+
 const path = require("path");
 const crypto = require("crypto");
 
@@ -77,7 +79,7 @@ app.get("/actor/insert", (req, res) => {
 // GET DATA
 
 app.get("/production/details", (req, res) => {
-  const sqlGetProd = "select * from production_compan";
+  const sqlGetProd = "select * from production_company";
   db.query(sqlGetProd, (err, result) => {
     if (err) {
       return res.sendStatus(400);
@@ -186,14 +188,14 @@ app.post("/production", (req, res) => {
     });
   });
 
-  res.redirect("/production");
+  res.sendStatus(200);
 });
 
 app.post("/movie", (req, res) => {});
 
 // DELETE DATA
 
-app.get("/production/delete/:id", (req, res) => {
+app.delete("/production/:id", (req, res) => {
   const id = req.params.id;
 
   db.beginTransaction(err => {
@@ -221,7 +223,7 @@ app.get("/production/delete/:id", (req, res) => {
     });
   });
 
-  res.redirect("/production");
+  res.sendStatus(204);
 });
 
 // ERROR ROUTE
