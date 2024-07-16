@@ -46,6 +46,7 @@ body {
   gap: 2rem;
   width: 50rem;
   padding: 2.4rem 3.6rem 3.6rem;
+  margin: 3.6rem auto;
   /* background: linear-gradient(
     145deg,
     rgba(255, 255, 255, 0.25),
@@ -72,6 +73,44 @@ header {
 .form .input-group {
   padding: 0 0 3.2rem;
   position: relative;
+}
+
+.input-group i {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
+  font-size: 1.4rem;
+  visibility: hidden;
+}
+
+.input-group i.icon-textarea {
+  top: 5.5rem;
+  right: 1.5rem;
+}
+
+.input-group.success .icon-success {
+  color: #15803d;
+  visibility: visible;
+}
+
+.input-group.error .icon-error {
+  color: #c2410c;
+  visibility: visible;
+}
+
+.input-group span {
+  position: absolute;
+  font-size: 1.4rem;
+  font-weight: 500;
+  bottom: 0.8rem;
+  left: 0.4rem;
+  visibility: hidden;
+  color: #c2410c;
+}
+
+.input-group.error span {
+  visibility: visible;
 }
 
 .input-group label {
@@ -108,36 +147,56 @@ header {
   border-color: #c2410c;
 }
 
-.input-group i {
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  transform: translateY(-50%);
-  font-size: 1.4rem;
-  visibility: hidden;
+.input-group textarea {
+  width: 100%;
+  background: #fff;
+  border: 3px solid #b3b6bb;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.6rem;
+  color: #333;
+  resize: vertical;
+  min-height: 10rem;
+  max-height: fit-content;
+  transition: border-color 0.2s;
 }
 
-.input-group.success .icon-success {
-  color: #15803d;
-  visibility: visible;
+.input-group textarea:focus {
+  border-color: #ff8f33;
 }
 
-.input-group.error .icon-error {
-  color: #c2410c;
-  visibility: visible;
+.input-group.success textarea,
+.input-group.success textarea:focus {
+  border-color: #15803d;
 }
 
-.input-group span {
-  position: absolute;
-  font-size: 1.4rem;
-  font-weight: 500;
-  bottom: 0.8rem;
-  left: 0.4rem;
-  visibility: hidden;
-  color: #c2410c;
+.input-group.error textarea,
+.input-group.error textarea:focus {
+  border-color: #c2410c;
 }
 
-.input-group.error span {
+.input-group select {
+  position: relative;
+  width: 100%;
+  background: #fff;
+  border: 3px solid #b3b6bb;
+  outline: none;
+  border-radius: 8px;
+  padding: 0.8rem 1.6rem;
+  font-size: 1.6rem;
+  color: #333;
+  cursor: pointer;
+  transition: all 0.2s;
+  appearance: none;
+}
+
+.input-group select:focus {
+  border-color: #ff8f33;
+}
+
+.input-group .icon-arrow {
+  right: 2rem;
   visibility: visible;
 }
 

@@ -30,21 +30,22 @@
             id="year"
             min="1900"
             max="2024"
-            placeholder="1978" />
+            placeholder="1997" />
           <span>Error Message</span>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
         <div class="input-group">
           <label for="plot">Plot Outline</label>
-          <input
+          <textarea
             type="text"
             name="plot"
             id="plot"
-            placeholder="Type here ..." />
+            placeholder="Movie based on the real incident of the ship Titanic . . ."></textarea>
           <span>Error Message</span>
-          <i class="fa-solid fa-circle-check icon-success"></i>
-          <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          <i class="fa-solid fa-circle-check icon-success icon-textarea"></i>
+          <i
+            class="fa-solid fa-circle-exclamation icon-error icon-textarea"></i>
         </div>
         <div class="input-group">
           <label for="length">Length in minutes</label>
@@ -61,10 +62,33 @@
         <div class="input-group">
           <label for="genre">Genre(s)</label>
           <select name="genre" id="genre"></select>
+          <span>Error Message</span>
+          <i class="fa-solid fa-chevron-down icon-arrow"></i>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
         <div class="input-group">
           <label for="production">Produced By</label>
-          <select name="production" id="production"></select>
+          <select class="select-box" name="production" id="production">
+            <ul class="options">
+              <li>
+                <option value="#">Select an option</option>
+              </li>
+              <li>
+                <option value="Hello">Hello</option>
+              </li>
+              <li>
+                <option value="Hi">Hi</option>
+              </li>
+              <li>
+                <option value="Bye">Bye</option>
+              </li>
+            </ul>
+          </select>
+          <span>Error Message</span>
+          <i class="fa-solid fa-chevron-down icon-arrow"></i>
+          <i class="fa-solid fa-circle-check icon-success"></i>
+          <i class="fa-solid fa-circle-exclamation icon-error"></i>
         </div>
         <div class="btn-group">
           <button type="submit" class="submit">Submit</button>
@@ -84,7 +108,7 @@
       const cancelBtn = document.querySelector(".cancel");
 
       cancelBtn.addEventListener("click", e => {
-        window.location.href = "/production";
+        window.location.href = "/movie";
       });
 
       form.addEventListener("submit", e => {

@@ -172,6 +172,14 @@ app.post("/production", (req, res) => {
           return res.redirect("/pages/error/400.html");
         });
       }
+
+      db.commit(err => {
+        if (err) {
+          db.rollback(() => {
+            return res.redirect("/pages/error/400.html");
+          });
+        }
+      });
     });
   });
 
@@ -201,7 +209,16 @@ app.get("/production/delete/:id", (req, res) => {
           return res.redirect("/pages/error/400.html");
         });
       }
+
+      db.commit(err => {
+        if (err) {
+          db.rollback(() => {
+            return res.redirect("/pages/error/400.html");
+          });
+        }
+      });
     });
+    res.redirect("/production");
   });
 
   res.redirect("/production");
