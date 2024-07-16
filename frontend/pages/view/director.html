@@ -95,7 +95,9 @@
           const res = await fetch("/director/details");
           const data = await res.json();
           production = data;
-        } catch (error) {}
+        } catch (error) {
+          throw error;
+        }
 
         return production;
       };
@@ -111,7 +113,9 @@
           });
           text = text.substring(0, text.length - 6);
           movieEl.innerHTML = text;
-        } catch (error) {}
+        } catch (error) {
+          throw error;
+        }
       };
 
       const setMovie = async function (id, i) {
@@ -127,7 +131,9 @@
           });
           text = text.substring(0, text.length - 6);
           movieEl.innerHTML = text;
-        } catch (error) {}
+        } catch (error) {
+          throw error;
+        }
       };
 
       const buildTable = function (data) {
@@ -165,8 +171,12 @@
       };
 
       const init = async function () {
-        data = await getData();
-        buildTable(data);
+        try {
+          data = await getData();
+          await buildTable(data);
+        } catch (error) {
+          window.location.assign("/error");
+        }
       };
 
       init();
