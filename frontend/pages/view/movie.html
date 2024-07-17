@@ -60,6 +60,14 @@
         </table>
       </section>
       <dialog class="modal"></dialog>
+      <dialog class="modal-delete">
+        <p>This will delete all items related to this movie.</p>
+        <p><b>Are you sure?</b></p>
+        <div class="modal-btn">
+          <button data-id="" class="btn-delete">delete</button>
+          <button class="btn-cancel">cancel</button>
+        </div>
+      </dialog>
     </main>
 
     <footer class="footer" id="footer">
@@ -90,19 +98,14 @@
     </footer>
 
     <script>
-      let data;
-
       const getData = async function () {
-        let production = [];
         try {
           const res = await fetch("/movie/details");
           const data = await res.json();
-          production = data;
+          return data;
         } catch (error) {
           throw error;
         }
-
-        return production;
       };
 
       const setGenre = async function (id, i) {
@@ -135,11 +138,15 @@
                 <td id="genre-${i}">%GENRE%</td>
                 <td>${movie.production}</td>
                 <td>
-                  <a href="#"><i class="fa-solid fa-eye view-icon"></i></a>
-                  <a href="#"
-                    ><i class="fa-solid fa-pen-to-square edit-icon"></i
-                  ></a>
-                  <a href="#"><i class="fa-solid fa-trash delete-icon"></i></a>
+                  <a class="delete" data-id="${movie.m_id}">
+                    <i class="fa-solid fa-eye view-icon"></i>
+                  </a>
+                  <a class="delete" data-id="${movie.m_id}">
+                    <i class="fa-solid fa-pen-to-square edit-icon"></i>
+                  </a>
+                  <a class="delete" data-id="${movie.m_id}">
+                    <i class="fa-solid fa-trash delete-icon"></i>
+                  </a>
                 </td>
               </tr>
             `;
@@ -171,35 +178,43 @@
         try {
           data = await getData();
           await buildTable(data);
+
+          const deleteLinks = document.querySelectorAll("a.delete");
+          deleteLinks.forEach(link => {
+            link.addEventListener("click", e => {
+              e.preventDefault();
+              const id = link.dataset.id;
+              document.querySelector(".btn-delete").dataset.id = id;
+              document.querySelector(".modal-delete").showModal();
+            });
+          });
+
+          const getSearchData = function (search) {
+            console.log(data);
+            const filteredData = data.filter(movie => {
+              const name = movie.title.toLowerCase();
+              const newSearch = search.toLowerCase();
+
+              return name.startsWith(newSearch);
+            });
+
+            return filteredData;
+          };
+
+          const search = document.getElementById("search");
+          search.addEventListener("keyup", e => {
+            const val = search.value;
+            if (val != "") {
+              const newData = getSearchData(val);
+              buildTable(newData);
+            } else {
+              buildTable(data);
+            }
+          });
         } catch (error) {
           window.location.assign("/error");
         }
       };
-
-      init();
-
-      const getSearchData = function (search) {
-        console.log(data);
-        const filteredData = data.filter(movie => {
-          const name = movie.title.toLowerCase();
-          const newSearch = search.toLowerCase();
-
-          return name.startsWith(newSearch);
-        });
-
-        return filteredData;
-      };
-
-      const search = document.getElementById("search");
-      search.addEventListener("keyup", e => {
-        const val = search.value;
-        if (val != "") {
-          const newData = getSearchData(val);
-          buildTable(newData);
-        } else {
-          buildTable(data);
-        }
-      });
 
       const pages = document.querySelector(".pages");
       document.addEventListener("click", e => {
@@ -209,6 +224,23 @@
           pages.classList.remove("show");
         }
       });
+
+      const modalCancelBtn = document.querySelector(".btn-cancel");
+      modalCancelBtn.addEventListener("click", e => {
+        document.querySelector(".modal-delete").close();
+      });
+
+      const modalDeleteBtn = document.querySelector(".btn-delete");
+      modalDeleteBtn.addEventListener("click", e => {
+        const id = modalDeleteBtn.dataset.id;
+        fetch("/movie/" + id, {
+          method: "DELETE",
+        })
+          .then(res => window.location.assign("/movie"))
+          .catch(err => window.location.assign("/error"));
+      });
+
+      init();
     </script>
   </body>
 </html>

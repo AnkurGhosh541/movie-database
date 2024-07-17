@@ -26,13 +26,7 @@
 
         <div class="input-group">
           <label for="year">Year of Release</label>
-          <input
-            type="number"
-            name="year"
-            id="year"
-            min="1900"
-            max="2024"
-            placeholder="1997" />
+          <input type="number" name="year" id="year" placeholder="1997" />
           <span>Error Message</span>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
@@ -53,12 +47,7 @@
 
         <div class="input-group">
           <label for="length">Length in minutes</label>
-          <input
-            type="number"
-            name="length"
-            id="length"
-            min="0"
-            placeholder="194" />
+          <input type="number" name="length" id="length" placeholder="194" />
           <span>Error Message</span>
           <i class="fa-solid fa-circle-check icon-success"></i>
           <i class="fa-solid fa-circle-exclamation icon-error"></i>
@@ -68,9 +57,81 @@
           <label for="genre">Genre(s)</label>
           <div class="select-box">
             <div class="select" id="genre" multiple>
-              <span class="select-text">Please select the genre(s)</span>
+              <span class="select-text">
+                Please select the genre(s)
+                <!-- <span class="selected-option"> Romance </span> -->
+                <!-- <span class="selected-option more"> +3 </span> -->
+              </span>
               <i class="fa-solid fa-chevron-down icon-arrow"></i>
             </div>
+            <ul class="options multi" id="genre-list">
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Action</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Adventure</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Comedy</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Drama</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Romance</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Horror</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Sci-Fi</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Animated</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Fantasy</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Historical</span>
+              </li>
+              <li>
+                <span class="checkbox">
+                  <i class="fa-solid fa-check"></i>
+                </span>
+                <span class="option">Crime</span>
+              </li>
+            </ul>
           </div>
           <span>Error Message</span>
           <i class="fa-solid fa-circle-check icon-success icon-select"></i>
@@ -84,7 +145,7 @@
               <span class="select-text">Please select a producer</span>
               <i class="fa-solid fa-chevron-down icon-arrow"></i>
             </div>
-            <ul class="options-single" id="prod-list">
+            <ul class="options single" id="prod-list">
               <!-- <li><span class="option">Marvel</span></li> -->
             </ul>
           </div>
@@ -116,10 +177,22 @@
         const formData = new FormData(form);
 
         if (checkInputs()) {
-          const selectedProduction =
-            document.querySelector(".selected").dataset.prodId;
+          const selectedProduction = document.querySelector(
+            "#prod-list .selected"
+          ).dataset.prodId;
           formData.append("production", selectedProduction);
-          console.log(selectedProduction);
+
+          const selectedGenres = genreList.querySelectorAll(".selected");
+          selectedGenres.forEach(genre => {
+            formData.append("genre", genre.lastElementChild.textContent);
+          });
+
+          fetch("/movie", {
+            method: "POST",
+            body: formData,
+          })
+            .then(res => window.location.assign("/movie"))
+            .catch(err => window.location.assign("/error"));
         }
       });
 
@@ -133,7 +206,12 @@
         const yearValue = year.value.trim();
         const plotValue = plot.value.trim();
         const lengthValue = length.value.trim();
-        const selectedProduction = document.querySelector(".selected");
+        const selectedProduction = document.querySelector(
+          "#prod-list .selected"
+        );
+        const selectedGenres = document.querySelectorAll(
+          "#genre-list .selected"
+        );
 
         const error = {
           title: false,
@@ -155,6 +233,12 @@
         if (yearValue === "") {
           setErrorFor(year, "This field can not be empty");
           error.year = true;
+        } else if (yearValue < 1888) {
+          setErrorFor(year, "There are no movie released before 1888");
+          error.year = true;
+        } else if (yearValue > new Date(Date.now()).getFullYear()) {
+          setErrorFor(year, "Future movie releases are not allowed");
+          error.year = true;
         } else {
           setSuccessFor(year);
           error.year = false;
@@ -171,9 +255,20 @@
         if (lengthValue === "") {
           setErrorFor(length, "This field can not be empty");
           error.length = true;
+        } else if (lengthValue <= 0) {
+          setErrorFor(length, "Length should be more than 0");
+          error.length = true;
         } else {
           setSuccessFor(length);
           error.length = false;
+        }
+
+        if (selectedGenres.length == 0) {
+          setErrorFor(genre.parentElement, "This field can not be empty");
+          error.genre = true;
+        } else {
+          setSuccessFor(genre.parentElement);
+          error.genre = false;
         }
 
         if (selectedProduction == null) {
@@ -209,6 +304,35 @@
         false
       );
 
+      const genreList = document.getElementById("genre-list");
+      const genres = genreList.querySelectorAll("li");
+      const maxTag = 4;
+      let extraCount = 0;
+      const colors = ["#93c5fd", "#34d399", "#fcd34d", "#fca5a5"];
+      genres.forEach(genreItem => {
+        genreItem.addEventListener("click", e => {
+          genreItem.classList.toggle("selected");
+          const selectedGenres = genreList.querySelectorAll(".selected");
+          if (selectedGenres.length == 0) {
+            genre.firstElementChild.innerHTML = "Please select the genre(s)";
+          } else {
+            const genreArr = Array.from(selectedGenres);
+            const showable = genreArr.slice(0, maxTag);
+            const notShowable = genreArr.slice(maxTag);
+
+            let html = ``;
+            showable.forEach((tag, i) => {
+              html += `<span class="selected-option" style="background: ${colors[i]}">${tag.textContent}</span>`;
+            });
+
+            if (notShowable.length > 0) {
+              html += `<span class="selected-option more">+${notShowable.length}</span>`;
+            }
+            genre.firstElementChild.innerHTML = html;
+          }
+        });
+      });
+
       const toggleOpenProd = () =>
         production.parentElement.classList.toggle("open");
       production.addEventListener("click", e => toggleOpenProd());
@@ -222,7 +346,7 @@
           production.parentElement.classList.remove("open");
         }
 
-        if (e.target != genre) {
+        if (e.target.closest(".select-box") != genre.parentElement) {
           genre.parentElement.classList.remove("open");
         }
       });

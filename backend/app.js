@@ -188,10 +188,56 @@ app.post("/production", (req, res) => {
     });
   });
 
-  res.sendStatus(200);
+  res.sendStatus(201);
 });
 
-app.post("/movie", (req, res) => {});
+app.post("/movie", (req, res) => {
+  const { title, year, plot, length, production, genre } = req.body;
+  const genres = [].concat(genre);
+
+  db.beginTransaction(err => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+
+    const mId = crypto.randomUUID();
+    const sqlInsertMovie = "insert into movie values(?,?,?,?,?,?)";
+    db.query(
+      sqlInsertMovie,
+      [mId, title, year, plot, length, production],
+      (err, result) => {
+        if (err) {
+          db.rollback(() => {
+            return res.sendStatus(400);
+          });
+        }
+
+        const sqlInsertGenre = "insert into genre values(?,?)";
+        genres.forEach(genre => {
+          db.query(sqlInsertGenre, [mId, genre], (err, result) => {
+            if (err) {
+              db.rollback(() => {
+                return res.sendStatus(400);
+              });
+            }
+          });
+        });
+
+        db.commit(err => {
+          if (err) {
+            db.rollback(() => {
+              res.sendStatus(400);
+            });
+          }
+        });
+      }
+    );
+  });
+
+  res.sendStatus(201);
+});
 
 // DELETE DATA
 
@@ -207,6 +253,37 @@ app.delete("/production/:id", (req, res) => {
 
     const sqlDeleteProd = "delete from production_company where p_id=?";
     db.query(sqlDeleteProd, [id], (err, result) => {
+      if (err) {
+        db.rollback(() => {
+          return res.sendStatus(400);
+        });
+      }
+
+      db.commit(err => {
+        if (err) {
+          db.rollback(() => {
+            return res.sendStatus(400);
+          });
+        }
+      });
+    });
+  });
+
+  res.sendStatus(204);
+});
+
+app.delete("/movie/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.beginTransaction(err => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+
+    const sqlDeleteMovie = "delete from movie where m_id=?";
+    db.query(sqlDeleteMovie, [id], (err, result) => {
       if (err) {
         db.rollback(() => {
           return res.sendStatus(400);
