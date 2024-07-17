@@ -157,6 +157,17 @@ app.get("/appearance/:id", (req, res) => {
   });
 });
 
+app.get("/movie/details/name", (req, res) => {
+  const sqlGetMovie = "select m_id, title from movie";
+  db.query(sqlGetMovie, (err, result) => {
+    if (err) {
+      return res.sendStatus(400);
+    }
+
+    res.json(result);
+  });
+});
+
 // INSERT DATA
 
 app.post("/production", (req, res) => {
@@ -228,12 +239,100 @@ app.post("/movie", (req, res) => {
         db.commit(err => {
           if (err) {
             db.rollback(() => {
-              res.sendStatus(400);
+              return res.sendStatus(400);
             });
           }
         });
       }
     );
+  });
+
+  res.sendStatus(201);
+});
+
+app.post("/actor", (req, res) => {
+  const { fname, lname, dob, gender, movie, role, quoteMovie, quote } =
+    req.body;
+
+  const movies = [].concat(movie);
+  const roles = [].concat(role);
+  const quoteMovies = [].concat(quoteMovie);
+  const quotes = [].concat(quote);
+
+  db.beginTransaction(err => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+
+    const actId = crypto.randomUUID();
+    const sqlInsertAct = "insert into actor values(?)";
+    db.query(sqlInsertAct, [actId], (err, result) => {
+      if (err) {
+        db.rollback(() => {
+          return res.sendStatus(400);
+        });
+      }
+
+      const aId = crypto.randomUUID();
+      const sqlInsertActor = "insert into only_actor values(?,?,?,?,?,?)";
+      db.query(
+        sqlInsertActor,
+        [aId, fname, lname, dob, gender, actId],
+        (err, result) => {
+          if (err) {
+            db.rollback(() => {
+              return res.sendStatus(400);
+            });
+          }
+
+          const sqlInsertAppear = "insert into appears values(?,?,?)";
+          for (let i = 0; i < movies.length; i++) {
+            const mId = movies[i];
+            const movieRole = roles[i];
+
+            db.query(
+              sqlInsertAppear,
+              [actId, mId, movieRole],
+              (err, result) => {
+                if (err) {
+                  db.rollback(() => {
+                    return res.sendStatus(400);
+                  });
+                }
+              }
+            );
+          }
+
+          const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
+          for (let i = 0; i < quoteMovies.length; i++) {
+            const mId = quoteMovies[i];
+            const movieQuote = quotes[i];
+
+            db.query(
+              sqlInsertQuotes,
+              [mId, actId, movieQuote],
+              (err, result) => {
+                if (err) {
+                  db.rollback(() => {
+                    return res.sendStatus(400);
+                  });
+                }
+              }
+            );
+          }
+
+          db.commit(err => {
+            if (err) {
+              db.rollback(() => {
+                return res.sendStatus(400);
+              });
+            }
+          });
+        }
+      );
+    });
   });
 
   res.sendStatus(201);
@@ -284,6 +383,37 @@ app.delete("/movie/:id", (req, res) => {
 
     const sqlDeleteMovie = "delete from movie where m_id=?";
     db.query(sqlDeleteMovie, [id], (err, result) => {
+      if (err) {
+        db.rollback(() => {
+          return res.sendStatus(400);
+        });
+      }
+
+      db.commit(err => {
+        if (err) {
+          db.rollback(() => {
+            return res.sendStatus(400);
+          });
+        }
+      });
+    });
+  });
+
+  res.sendStatus(204);
+});
+
+app.delete("/actor/:id", (req, res) => {
+  const id = req.params.id;
+
+  db.beginTransaction(err => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+
+    const sqlDeleteActor = "delete from actor where act_id=?";
+    db.query(sqlDeleteActor, [id], (err, result) => {
       if (err) {
         db.rollback(() => {
           return res.sendStatus(400);

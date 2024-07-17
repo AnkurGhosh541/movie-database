@@ -7,12 +7,455 @@
     <link rel="stylesheet" href="../../css/styles-forms.css" />
   </head>
   <body>
-    <div class="container">
+    <div class="container wide">
       <header>
         <h2 class="title">Add Actor</h2>
       </header>
 
-      <form class="form" id="form">.</form>
+      <form class="form" id="form">
+        <div class="long-input-group">
+          <div class="input-group">
+            <label for="fname">First Name</label>
+            <input type="text" name="fname" id="fname" placeholder="Leonardo" />
+            <span>Error Message</span>
+            <i class="fa-solid fa-circle-check icon-success"></i>
+            <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          </div>
+          <div class="input-group">
+            <label for="lname">Last Name</label>
+            <input type="text" name="lname" id="lname" placeholder="DiCaprio" />
+            <span>Error Message</span>
+            <i class="fa-solid fa-circle-check icon-success"></i>
+            <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          </div>
+        </div>
+        <div class="long-input-group">
+          <div class="input-group">
+            <label for="dob">Date of Birth</label>
+            <input type="date" name="dob" id="dob" />
+            <span>Error Message</span>
+            <i class="fa-solid fa-circle-check icon-success"></i>
+            <i class="fa-solid fa-circle-exclamation icon-error"></i>
+          </div>
+          <div class="input-group">
+            <label for="gender">Gender</label>
+            <div class="select-box">
+              <div class="select" id="gender">
+                <span class="select-text">Please select a Gender</span>
+                <i class="fa-solid fa-chevron-down icon-arrow"></i>
+              </div>
+              <ul
+                class="options single"
+                id="gender-list"
+                style="position: absolute; z-index: 999">
+                <li><span class="option">Male</span></li>
+                <li><span class="option">Female</span></li>
+                <li><span class="option">Trans</span></li>
+                <li><span class="option">Others</span></li>
+              </ul>
+            </div>
+            <span>Error Message</span>
+            <i class="fa-solid fa-circle-check icon-success icon-select"></i>
+            <i
+              class="fa-solid fa-circle-exclamation icon-error icon-select"></i>
+          </div>
+        </div>
+        <div class="movie-box">
+          <label>Movies Worked</label>
+          <div class="movies" id="movies">
+            <div class="movie">
+              <div class="long-input-group">
+                <span class="serial">1.</span>
+                <div class="input-group">
+                  <div class="select-box">
+                    <div class="select select-movie">
+                      <span class="select-text">Please select a Movie</span>
+                      <i class="fa-solid fa-chevron-down icon-arrow"></i>
+                    </div>
+                    <ul class="options single movie-list">
+                      <!-- <li><span class="option">Marvel</span></li> -->
+                    </ul>
+                  </div>
+                  <span>Error Message</span>
+                  <i
+                    class="fa-solid fa-circle-check icon-success icon-select"></i>
+                  <i
+                    class="fa-solid fa-circle-exclamation icon-error icon-select"></i>
+                </div>
+
+                <div class="input-group">
+                  <input
+                    type="text"
+                    name="role"
+                    placeholder="Enter the role in movie" />
+                  <span>Error Message</span>
+                  <i class="fa-solid fa-circle-check icon-success"></i>
+                  <i class="fa-solid fa-circle-exclamation icon-error"></i>
+                </div>
+              </div>
+              <div class="quote-section">
+                <!-- Add Quote -->
+                <button type="button" class="btn add-quote">Add quote</button>
+              </div>
+            </div>
+          </div>
+          <button type="button" class="btn add-movie" id="btn-add-movie">
+            Add Movie
+          </button>
+        </div>
+        <div class="btn-group">
+          <button type="submit" class="submit">Submit</button>
+          <button type="button" class="cancel">Cancel</button>
+        </div>
+      </form>
     </div>
+
+    <script>
+      const form = document.getElementById("form");
+
+      const cancelBtn = document.querySelector(".cancel");
+      cancelBtn.addEventListener("click", e => {
+        window.location.href = "/actor";
+      });
+
+      form.addEventListener("submit", e => {
+        e.preventDefault();
+        const formData = new FormData(form);
+
+        const selectedGender = document.querySelector("#gender-list .selected");
+        formData.append("gender", selectedGender.firstElementChild.textContent);
+
+        const selectedMovies = document.querySelectorAll(
+          ".movie-list .selected"
+        );
+        selectedMovies.forEach(movie => {
+          formData.append("movie", movie.dataset.movieId);
+        });
+
+        const quotes = document.querySelectorAll(".quote");
+        quotes.forEach(quote => {
+          formData.append("quoteMovie", quote.parentElement.dataset.id);
+        });
+
+        fetch("/actor", {
+          method: "POST",
+          body: formData,
+        })
+          .then(res => window.location.assign("/actor"))
+          .catch(err => window.location.assign("/error"));
+      });
+
+      function checkInputs() {
+        const title = document.getElementById("title");
+        const year = document.getElementById("year");
+        const plot = document.getElementById("plot");
+        const length = document.getElementById("length");
+
+        const titleValue = title.value.trim();
+        const yearValue = year.value.trim();
+        const plotValue = plot.value.trim();
+        const lengthValue = length.value.trim();
+        const selectedProduction = document.querySelector(
+          "#prod-list .selected"
+        );
+        const selectedGenres = document.querySelectorAll(
+          "#genre-list .selected"
+        );
+
+        const error = {
+          title: false,
+          year: false,
+          plot: false,
+          length: false,
+          genre: false,
+          production: false,
+        };
+
+        if (titleValue === "") {
+          setErrorFor(title, "This field can not be empty");
+          error.title = true;
+        } else {
+          setSuccessFor(title);
+          error.title = false;
+        }
+
+        if (yearValue === "") {
+          setErrorFor(year, "This field can not be empty");
+          error.year = true;
+        } else if (yearValue < 1888) {
+          setErrorFor(year, "There are no movie released before 1888");
+          error.year = true;
+        } else if (yearValue > new Date(Date.now()).getFullYear()) {
+          setErrorFor(year, "Future movie releases are not allowed");
+          error.year = true;
+        } else {
+          setSuccessFor(year);
+          error.year = false;
+        }
+
+        if (plotValue === "") {
+          setErrorFor(plot, "This field can not be empty");
+          error.plot = true;
+        } else {
+          setSuccessFor(plot);
+          error.plot = false;
+        }
+
+        if (lengthValue === "") {
+          setErrorFor(length, "This field can not be empty");
+          error.length = true;
+        } else if (lengthValue <= 0) {
+          setErrorFor(length, "Length should be more than 0");
+          error.length = true;
+        } else {
+          setSuccessFor(length);
+          error.length = false;
+        }
+
+        if (selectedGenres.length == 0) {
+          setErrorFor(genre.parentElement, "This field can not be empty");
+          error.genre = true;
+        } else {
+          setSuccessFor(genre.parentElement);
+          error.genre = false;
+        }
+
+        if (selectedProduction == null) {
+          setErrorFor(production.parentElement, "This field can not be empty");
+          error.production = true;
+        } else {
+          setSuccessFor(production.parentElement);
+          error.production = false;
+        }
+
+        return !Object.values(error).includes(true);
+      }
+
+      function setErrorFor(element, message) {
+        element.nextElementSibling.textContent = message;
+        element.parentElement.classList.remove("success");
+        element.parentElement.classList.add("error");
+      }
+
+      function setSuccessFor(element) {
+        element.parentElement.classList.remove("error");
+        element.parentElement.classList.add("success");
+      }
+
+      async function getMovie() {
+        try {
+          const res = await fetch("/movie/details/name");
+          const data = await res.json();
+          return data;
+        } catch (error) {
+          throw error;
+        }
+      }
+
+      async function addMovie() {
+        try {
+          const html = `
+            <div class="movie">
+              <div class="long-input-group">
+                <span class="serial">${
+                  document.querySelectorAll(".movie").length + 1
+                }.</span>
+                <div class="input-group">
+                  <div class="select-box">
+                    <div class="select select-movie">
+                      <span class="select-text">Please select a Movie</span>
+                      <i class="fa-solid fa-chevron-down icon-arrow"></i>
+                    </div>
+                    <ul class="options single movie-list">
+                      <!-- <li><span class="option">Marvel</span></li> -->
+                    </ul>
+                  </div>
+                  <span>Error Message</span>
+                  <i
+                    class="fa-solid fa-circle-check icon-success icon-select"></i>
+                  <i
+                    class="fa-solid fa-circle-exclamation icon-error icon-select"></i>
+                </div>
+
+                <div class="input-group">
+                  <input
+                    type="text"
+                    name="role"
+                    placeholder="Enter the role in movie" />
+                  <span>Error Message</span>
+                  <i class="fa-solid fa-circle-check icon-success"></i>
+                  <i class="fa-solid fa-circle-exclamation icon-error"></i>
+                </div>
+              </div>
+              <div class="quote-section">
+                <button type="button" class="btn add-quote">Add quote</button>
+                <button type="button" class="btn remove-movie">Remove Movie</button>
+              </div>
+            </div>
+          `;
+
+          await document
+            .getElementById("movies")
+            .insertAdjacentHTML("beforeend", html);
+
+          const movies = await getMovie();
+
+          const movieLists = await document.querySelectorAll(".movie-list");
+          await movies.forEach(movie => {
+            const html = `<li data-movie-id="${movie.m_id}"><span class="option">${movie.title}</span></li>`;
+            movieLists[movieLists.length - 1].insertAdjacentHTML(
+              "beforeend",
+              html
+            );
+          });
+
+          const selectMovies = await document.querySelectorAll(".select-movie");
+          const lastSelectMovies = selectMovies[selectMovies.length - 1];
+          await lastSelectMovies.addEventListener("click", e => {
+            lastSelectMovies.parentElement.classList.toggle("open");
+          });
+
+          const movieOptions =
+            lastSelectMovies.parentElement.querySelectorAll(".movie-list li");
+          movieOptions.forEach(option => {
+            option.addEventListener("click", e => {
+              movieOptions.forEach(opt => {
+                opt.classList.remove("selected");
+              });
+              option.classList.add("selected");
+              lastSelectMovies.firstElementChild.textContent =
+                option.firstElementChild.textContent;
+              lastSelectMovies.firstElementChild.style.color = "#333";
+              lastSelectMovies.parentElement.classList.remove("open");
+              const quoteSections = document.querySelectorAll(".quote-section");
+              const quoteSection = quoteSections[quoteSections.length - 1];
+              quoteSection.dataset.id = option.dataset.movieId;
+            });
+          });
+
+          const addQuotes = await document.querySelectorAll(".add-quote");
+          const addQuote = addQuotes[addQuotes.length - 1];
+          await addQuote.addEventListener("click", e => {
+            const html = `
+              <div class="input-group quote">
+                  <input
+                    type="text"
+                    name="quote"
+                    placeholder="Add a notable quote" />
+                  <button class="remove-quote">&Cross;</button>
+                </div>
+            `;
+            addQuote.insertAdjacentHTML("beforebegin", html);
+            const removeQuotes = document.querySelectorAll(".remove-quote");
+            removeQuotes[removeQuotes.length - 1].addEventListener(
+              "click",
+              e => {
+                removeQuotes[removeQuotes.length - 1].parentElement.remove();
+              }
+            );
+          });
+
+          const removeMovieBtns = await document.querySelectorAll(
+            ".remove-movie"
+          );
+          await removeMovieBtns[removeMovieBtns.length - 1].addEventListener(
+            "click",
+            e => {
+              removeMovieBtns[removeMovieBtns.length - 1]
+                .closest(".movie")
+                .remove();
+              document.querySelectorAll(".serial").forEach((serial, i) => {
+                serial.textContent = i + 1 + ".";
+              });
+            }
+          );
+        } catch (error) {}
+      }
+
+      const addMovieBtn = document.getElementById("btn-add-movie");
+      addMovieBtn.addEventListener("click", e => {
+        addMovie();
+      });
+
+      async function init() {
+        try {
+          const movies = await getMovie();
+          const movieList = await document.querySelector(".movie-list");
+          await movies.forEach(movie => {
+            const html = `<li data-movie-id="${movie.m_id}"><span class="option">${movie.title}</span></li>`;
+            movieList.insertAdjacentHTML("beforeend", html);
+          });
+
+          const selectMovie = await document.querySelector(".select-movie");
+          await selectMovie.addEventListener("click", e => {
+            selectMovie.parentElement.classList.toggle("open");
+          });
+
+          const addQuote = await document.querySelector(".add-quote");
+          await addQuote.addEventListener("click", e => {
+            const html = `
+              <div class="input-group quote">
+                  <input
+                    type="text"
+                    name="quote"
+                    placeholder="Add a notable quote" />
+                  <button class="remove-quote">&Cross;</button>
+                </div>
+            `;
+            addQuote.insertAdjacentHTML("beforebegin", html);
+            const removeQuotes = document.querySelectorAll(".remove-quote");
+            removeQuotes[removeQuotes.length - 1].addEventListener(
+              "click",
+              e => {
+                removeQuotes[removeQuotes.length - 1].parentElement.remove();
+              }
+            );
+          });
+
+          const movieOptions = document.querySelectorAll(".movie-list li");
+          movieOptions.forEach(option => {
+            option.addEventListener("click", e => {
+              movieOptions.forEach(opt => {
+                opt.classList.remove("selected");
+              });
+              option.classList.add("selected");
+              selectMovie.firstElementChild.textContent =
+                option.firstElementChild.textContent;
+              selectMovie.firstElementChild.style.color = "#333";
+              selectMovie.parentElement.classList.remove("open");
+              const quoteSection = document.querySelector(".quote-section");
+              quoteSection.dataset.id = option.dataset.movieId;
+            });
+          });
+        } catch (error) {}
+      }
+
+      init();
+
+      const gender = document.getElementById("gender");
+      const toggleOpenGender = () =>
+        gender.parentElement.classList.toggle("open");
+      gender.addEventListener("click", e => toggleOpenGender());
+
+      document.addEventListener("click", e => {
+        if (e.target != gender) {
+          gender.parentElement.classList.remove("open");
+        }
+      });
+
+      const genderList = document.querySelectorAll("#gender-list li");
+      genderList.forEach(option => {
+        option.addEventListener("click", e => {
+          genderList.forEach(opt => {
+            opt.classList.remove("selected");
+          });
+          option.classList.add("selected");
+          gender.firstElementChild.textContent =
+            option.firstElementChild.textContent;
+          gender.firstElementChild.style.color = "#333";
+          gender.parentElement.classList.remove("open");
+        });
+      });
+    </script>
   </body>
 </html>

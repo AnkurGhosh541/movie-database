@@ -86,13 +86,17 @@ header {
   width: 100%;
 }
 
-.form .input-group {
-  padding: 0 0 3.2rem;
-  position: relative;
+.form .long-input-group {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 2rem;
 }
 
-.form .input-group:nth-last-of-type(0) {
-  background: red;
+.form .input-group {
+  width: 100%;
+  padding: 0 0 3.2rem;
+  position: relative;
 }
 
 .input-group > i {
@@ -139,12 +143,17 @@ header {
   visibility: visible;
 }
 
-.input-group label {
+.input-group label,
+.movie-box label {
   display: inline-block;
   font-size: 1.8rem;
   font-weight: 500;
   color: #333;
   margin-bottom: 0.6rem;
+}
+
+.movie-box label {
+  margin-bottom: 1.6rem;
 }
 
 .input-group input {
@@ -357,6 +366,66 @@ header {
 .select-box .options::-webkit-scrollbar-thumb {
   background: #eae0e6;
   border-radius: 10px;
+}
+
+.movies {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+}
+
+.movie .serial {
+  font-size: 2.2rem;
+  padding-bottom: 3.6rem;
+  color: #333;
+}
+
+.movie-box .btn {
+  font-size: 1.4rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.input-group.quote {
+  display: flex;
+  gap: 1.6rem;
+  padding-left: 3.2rem;
+}
+
+.quote .remove-quote {
+  width: 4.48rem;
+  height: 4.48rem;
+  font-size: 2.4rem;
+  background: transparent;
+  border: 1px solid #94a3b8;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn.add-movie {
+  display: block;
+  margin-left: auto;
+  font-size: 1.6rem;
+  margin-bottom: 2.4rem;
+  background: #ff8f33;
+  color: #fff;
+}
+
+.add-movie:hover {
+  background: #fd790e;
+}
+
+.btn.add-quote {
+  border-color: #8b919a;
+  margin-left: 3.2rem;
+}
+
+.btn.remove-movie {
+  border-color: #8b919a;
+  margin-left: 2rem;
 }
 
 .form .btn-group {
