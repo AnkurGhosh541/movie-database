@@ -176,7 +176,7 @@ app.post("/production", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      return db.rollback(() => {
+      db.rollback(() => {
         return res.sendStatus(400);
       });
     }
@@ -270,7 +270,7 @@ app.post("/director", (req, res) => {
     }
 
     let actId = null;
-    if (typeof movies[0] != "undefined") {
+    if (movie) {
       actId = crypto.randomUUID();
       const sqlInsertAct = "insert into actor values(?)";
       db.query(sqlInsertAct, [actId], (err, result) => {
@@ -294,9 +294,9 @@ app.post("/director", (req, res) => {
           });
         }
 
-        const sqlInsertDirected = "insert into directs values(?,?,?)";
+        const sqlInsertDirected = "insert into directs values(?,?)";
         directed.forEach(movie => {
-          db.query(sqlInsertDirected, [dId, movie], (err, result) => {
+          db.query(sqlInsertDirected, [movie, dId], (err, result) => {
             if (err) {
               db.rollback(() => {
                 return res.sendStatus(400);
@@ -305,7 +305,7 @@ app.post("/director", (req, res) => {
           });
         });
 
-        if (typeof movies[0] != "undefined") {
+        if (movie) {
           const sqlInsertAppear = "insert into appears values(?,?,?)";
           for (let i = 0; i < movies.length; i++) {
             const mId = movies[i];
