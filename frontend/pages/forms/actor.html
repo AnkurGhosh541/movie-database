@@ -381,10 +381,13 @@
         try {
           const movies = await getMovie();
           const movieList = await document.querySelector(".movie-list");
-          await movies.forEach(movie => {
-            const html = `<li data-movie-id="${movie.m_id}"><span class="option">${movie.title}</span></li>`;
-            movieList.insertAdjacentHTML("beforeend", html);
-          });
+          if (movies.length == 0) {
+          } else {
+            await movies.forEach(movie => {
+              const html = `<li data-movie-id="${movie.m_id}"><span class="option">${movie.title}</span></li>`;
+              movieList.insertAdjacentHTML("beforeend", html);
+            });
+          }
 
           const selectMovie = await document.querySelector(".select-movie");
           await selectMovie.addEventListener("click", e => {

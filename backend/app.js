@@ -250,6 +250,113 @@ app.post("/movie", (req, res) => {
   res.sendStatus(201);
 });
 
+app.post("/director", (req, res) => {
+  const { fname, lname, dob, gender, direct, movie, role, quoteMovie, quote } =
+    req.body;
+
+  const directed = [].concat(direct);
+  const movies = [].concat(movie);
+  const roles = [].concat(role);
+  const quoteMovies = [].concat(quoteMovie);
+  const quotes = [].concat(quote);
+
+  console.log(directed);
+
+  db.beginTransaction(err => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+
+    let actId = null;
+    if (typeof movies[0] != "undefined") {
+      actId = crypto.randomUUID();
+      const sqlInsertAct = "insert into actor values(?)";
+      db.query(sqlInsertAct, [actId], (err, result) => {
+        if (err) {
+          db.rollback(() => {
+            return res.sendStatus(400);
+          });
+        }
+      });
+    }
+
+    const dId = crypto.randomUUID();
+    const sqlInsertDirector = "insert into director values(?,?,?,?,?,?)";
+    db.query(
+      sqlInsertDirector,
+      [dId, fname, lname, dob, gender, actId],
+      (err, result) => {
+        if (err) {
+          db.rollback(() => {
+            return res.sendStatus(400);
+          });
+        }
+
+        const sqlInsertDirected = "insert into directs values(?,?,?)";
+        directed.forEach(movie => {
+          db.query(sqlInsertDirected, [dId, movie], (err, result) => {
+            if (err) {
+              db.rollback(() => {
+                return res.sendStatus(400);
+              });
+            }
+          });
+        });
+
+        if (typeof movies[0] != "undefined") {
+          const sqlInsertAppear = "insert into appears values(?,?,?)";
+          for (let i = 0; i < movies.length; i++) {
+            const mId = movies[i];
+            const movieRole = roles[i];
+
+            db.query(
+              sqlInsertAppear,
+              [actId, mId, movieRole],
+              (err, result) => {
+                if (err) {
+                  db.rollback(() => {
+                    return res.sendStatus(400);
+                  });
+                }
+              }
+            );
+          }
+
+          const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
+          for (let i = 0; i < quoteMovies.length; i++) {
+            const mId = quoteMovies[i];
+            const movieQuote = quotes[i];
+
+            db.query(
+              sqlInsertQuotes,
+              [mId, actId, movieQuote],
+              (err, result) => {
+                if (err) {
+                  db.rollback(() => {
+                    return res.sendStatus(400);
+                  });
+                }
+              }
+            );
+          }
+        }
+
+        db.commit(err => {
+          if (err) {
+            db.rollback(() => {
+              return res.sendStatus(400);
+            });
+          }
+        });
+      }
+    );
+  });
+
+  res.sendStatus(201);
+});
+
 app.post("/actor", (req, res) => {
   const { fname, lname, dob, gender, movie, role, quoteMovie, quote } =
     req.body;
