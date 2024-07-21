@@ -404,22 +404,24 @@ app.post("/director", (req, res) => {
             );
           }
 
-          const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
-          for (let i = 0; i < quoteMovies.length; i++) {
-            const mId = quoteMovies[i];
-            const movieQuote = quotes[i];
+          if (quote) {
+            const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
+            for (let i = 0; i < quoteMovies.length; i++) {
+              const mId = quoteMovies[i];
+              const movieQuote = quotes[i];
 
-            db.query(
-              sqlInsertQuotes,
-              [mId, actId, movieQuote],
-              (err, result) => {
-                if (err) {
-                  db.rollback(() => {
-                    return res.sendStatus(400);
-                  });
+              db.query(
+                sqlInsertQuotes,
+                [mId, actId, movieQuote],
+                (err, result) => {
+                  if (err) {
+                    db.rollback(() => {
+                      return res.sendStatus(400);
+                    });
+                  }
                 }
-              }
-            );
+              );
+            }
           }
         }
 
@@ -492,22 +494,25 @@ app.post("/actor", (req, res) => {
             );
           }
 
-          const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
-          for (let i = 0; i < quoteMovies.length; i++) {
-            const mId = quoteMovies[i];
-            const movieQuote = quotes[i];
+          if (quote) {
+            const sqlInsertQuotes = "insert into speaks_quote values(?,?,?)";
+            for (let i = 0; i < quoteMovies.length; i++) {
+              const mId = quoteMovies[i];
+              const movieQuote = quotes[i];
 
-            db.query(
-              sqlInsertQuotes,
-              [mId, actId, movieQuote],
-              (err, result) => {
-                if (err) {
-                  db.rollback(() => {
-                    return res.sendStatus(400);
-                  });
+              db.query(
+                sqlInsertQuotes,
+                [mId, actId, movieQuote],
+                (err, result) => {
+                  console.log(err);
+                  if (err) {
+                    db.rollback(() => {
+                      return res.sendStatus(400);
+                    });
+                  }
                 }
-              }
-            );
+              );
+            }
           }
 
           db.commit(err => {
