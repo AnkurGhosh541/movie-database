@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>The Movie Database</title>
+    <link rel="stylesheet" href="../../css/styles-pages.css" />
+  </head>
+
+  <body>
+    <header class="header" id="header">
+      <a href="/" class="logo">The Movie DB</a>
+      <nav class="navbar">
+        <ul class="nav-links">
+          <li class="nav-link">
+            <a href="#">Home</a>
+          </li>
+          <li class="nav-link">
+            <a href="#footer">About</a>
+          </li>
+          <li class="nav-link pages">
+            <a href="javascript:"
+              >Pages <i class="fa-solid fa-angle-down link-icon"></i
+            ></a>
+            <ul class="dropdown">
+              <li><a href="/production">Production</a></li>
+              <li><a href="/movie">Movie</a></li>
+              <li><a href="/director">Director</a></li>
+              <li><a href="/actor">Actor</a></li>
+              <li><a href="/report">Report</a></li>
+            </ul>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="top-panel">
+        <div class="inputs">
+          <div class="input-group">
+            <label>Search by</label>
+            <div class="select-box">
+              <div class="select" id="search-term">
+                <span class="select-text">Select an option</span>
+                <i class="fa-solid fa-chevron-down icon-arrow"></i>
+              </div>
+              <ul class="options single" id="search-list">
+                <li id="prod">
+                  <span class="option">Production Company</span>
+                </li>
+                <li id="range"><span class="option">Release Year</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="input-group hidden" id="prod-input">
+            <div class="select-box">
+              <div class="select" id="production">
+                <span class="select-text">Please select a producer</span>
+                <i class="fa-solid fa-chevron-down icon-arrow"></i>
+              </div>
+              <ul class="options single" id="prod-list">
+                <!-- <li><span class="option">Marvel</span></li> -->
+              </ul>
+            </div>
+          </div>
+          <div class="input-group hidden" id="range-input">
+            <label>from</label>
+            <input
+              type="number"
+              name="from"
+              id="from-year"
+              min="1888"
+              max="2024"
+              placeholder="1888" />
+            <label>to</label>
+            <input
+              type="number"
+              name="to"
+              id="to-year"
+              min="1888"
+              max="2024"
+              placeholder="2024" />
+          </div>
+        </div>
+        <button class="btn btn-insert" id="search">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <span style="display: inline-block; margin-left: 0.4rem">Search</span>
+        </button>
+      </section>
+      <div class="divider"></div>
+      <section class="view-panel">
+        <table>
+          <thead>
+            <tr>
+              <th>Sl.</th>
+              <th>Movie Title</th>
+              <th>Year of<br />Release</th>
+              <th>Director(s)</th>
+              <th>Genre(s)</th>
+              <th>Produced by</th>
+              <th>Length</th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+            <!-- to be fetched -->
+          </tbody>
+        </table>
+      </section>
+    </main>
+
+    <footer class="footer" id="footer">
+      <div class="team">
+        <a href="#" class="team-logo">T 3 A M</a>
+        <div class="team-details">
+          <p>Advanced DBMS Lab</p>
+          <p>Team 3</p>
+          <p>M.Sc semester II</p>
+        </div>
+      </div>
+
+      <div class="members">
+        <div class="member">
+          <h3>Ankur Ghosh</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>29</span></p>
+        </div>
+
+        <div class="member">
+          <h3>Kausiki Das</h3>
+          <p>Stream: <span>M.Sc</span></p>
+          <p>Dept: <span>CSE</span></p>
+          <p>Roll: <span>11</span></p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const searchBtn = document.getElementById("search");
+      searchBtn.addEventListener("click", e => {
+        e.preventDefault();
+
+        const formData = new FormData();
+        const searchTerm = document.querySelector("#search-list .selected");
+        const productionCompany = document.querySelector(
+          "#prod-list .selected"
+        );
+        const fromYear = document.getElementById("from-year");
+        const toYear = document.getElementById("to-year");
+        const searchText = searchTerm.firstElementChild.textContent;
+        formData.append("search", searchText);
+        if (searchText == "Production Company") {
+          formData.append("production", productionCompany.dataset.prodId);
+        } else if (searchText == "Release Year") {
+          formData.append("from", fromYear.value);
+          formData.append("to", toYear.value);
+        }
+
+        fetch("/report", {
+          method: "POST",
+          body: formData,
+        })
+          .then(res => res.json())
+          .then(data => {
+            createTable(data);
+          })
+          .catch(err => {
+            window.location.assign("/error");
+          });
+      });
+
+      const createTable = data => {
+        const tbody = document.getElementById("tbody");
+        tbody.innerHTML = "";
+        data.forEach((movie, i) => {
+          const html = `
+            <tr>
+              <td>${i + 1}</td>
+              <td>${movie.title}</td>
+              <td>${movie.release_yr}</td>
+              <td>${movie.directors.trim().split(", ").join("<br>")}</td>
+              <td>${movie.genres.trim().split(", ").join("<br>")}</td>
+              <td>${movie.production}</td>
+              <td>${movie.length} min</td>
+            </tr>
+          `;
+          tbody.insertAdjacentHTML("beforeend", html);
+        });
+      };
+
+      const pages = document.querySelector(".pages");
+      document.addEventListener("click", e => {
+        if (e.target === pages.firstElementChild) {
+          pages.classList.toggle("show");
+        } else {
+          pages.classList.remove("show");
+        }
+      });
+
+      const production = document.getElementById("production");
+      const toggleOpenProd = () =>
+        production.parentElement.classList.toggle("open");
+      production.addEventListener("click", e => toggleOpenProd());
+
+      const search = document.getElementById("search-term");
+      const toggleOpenSearch = () =>
+        search.parentElement.classList.toggle("open");
+      search.addEventListener("click", e => toggleOpenSearch());
+
+      document.addEventListener("click", e => {
+        if (e.target != search) {
+          search.parentElement.classList.remove("open");
+        }
+
+        if (e.target != production) {
+          production.parentElement.classList.remove("open");
+        }
+      });
+
+      const prodInput = document.getElementById("prod-input");
+      const rangeInput = document.getElementById("range-input");
+
+      const searchTerms = document.querySelectorAll("#search-list li");
+      searchTerms.forEach(term => {
+        term.addEventListener("click", e => {
+          searchTerms.forEach(opt => {
+            opt.classList.remove("selected");
+          });
+          term.classList.add("selected");
+          search.firstElementChild.textContent =
+            term.firstElementChild.textContent;
+          search.firstElementChild.style.color = "#333";
+
+          if (term.id == "prod") {
+            rangeInput.classList.add("hidden");
+            prodInput.classList.remove("hidden");
+          } else if (term.id == "range") {
+            prodInput.classList.add("hidden");
+            rangeInput.classList.remove("hidden");
+          }
+        });
+      });
+
+      async function getProduction() {
+        try {
+          const res = await fetch("/production/details");
+          const data = await res.json();
+          return data;
+        } catch (error) {
+          throw error;
+        }
+      }
+
+      async function init() {
+        try {
+          const prodData = await getProduction();
+          const prodList = document.getElementById("prod-list");
+
+          if (prodData.length == 0) {
+            production.firstElementChild.textContent =
+              "No production house available";
+            production.removeEventListener("click", toggleOpenProd);
+          } else {
+            prodData.forEach(prod => {
+              const html = `<li data-prod-id="${prod.p_id}"><span class="option">${prod.name}</span></li>`;
+              prodList.insertAdjacentHTML("beforeend", html);
+            });
+          }
+
+          const prodOptions = document.querySelectorAll("#prod-list li");
+          prodOptions.forEach(option => {
+            option.addEventListener("click", e => {
+              prodOptions.forEach(opt => {
+                opt.classList.remove("selected");
+              });
+              option.classList.add("selected");
+              production.firstElementChild.textContent =
+                option.firstElementChild.textContent;
+              production.firstElementChild.style.color = "#333";
+            });
+          });
+        } catch (error) {}
+      }
+
+      init();
+    </script>
+  </body>
+</html>

@@ -26,6 +26,7 @@
               <li><a href="/movie">Movie</a></li>
               <li><a href="/director">Director</a></li>
               <li><a href="/actor">Actor</a></li>
+              <li><a href="/report">Report</a></li>
             </ul>
           </li>
         </ul>
@@ -140,7 +141,6 @@
         const tbody = document.getElementById("tbody");
         tbody.innerHTML = "";
         data.forEach((director, i) => {
-          console.log(typeof director.dob);
           let html = `
               <tr>
                 <td>${i + 1}</td>

@@ -50,6 +50,12 @@ app.get("/actor", (req, res) => {
   });
 });
 
+app.get("/report", (req, res) => {
+  res.sendFile("pages/reports/report.html", {
+    root: publicRoot,
+  });
+});
+
 // FORMS PAGES
 
 app.get("/production/insert", (req, res) => {
@@ -120,6 +126,82 @@ app.get("/actor/details", (req, res) => {
     }
 
     res.json(result);
+  });
+});
+
+// GET REPORT
+
+app.post("/report", (req, res) => {
+  const { search, production, from, to } = req.body;
+
+  let values;
+  let where;
+  let order;
+
+  switch (search.toLowerCase()) {
+    case "production company":
+      where = "p_id=?";
+      order = "genres, directors";
+      values = [production];
+      break;
+
+    case "release year":
+      where = "release_yr BETWEEN ? AND ?";
+      order = "release_yr, genres";
+      values = [from, to];
+      break;
+
+    default:
+      return res.sendStatus(400);
+  }
+
+  const sqlQuery = `
+    SELECT
+      title,
+      release_yr,
+      directors,
+      genres,
+      name AS production,
+      length
+    FROM
+      (
+        (
+          SELECT
+            m_id,
+            GROUP_CONCAT(
+              CONCAT_WS(' ', fname, lname) SEPARATOR ', '
+            ) AS directors
+          FROM
+            director NATURAL
+            JOIN directs NATURAL
+            JOIN movie
+          GROUP BY
+            m_id
+        ) A NATURAL
+        JOIN (
+          SELECT
+            m_id,
+            GROUP_CONCAT(genre ORDER BY genre SEPARATOR ', ') AS genres
+          FROM
+            genre NATURAL
+            JOIN movie
+          GROUP BY
+            m_id
+        ) B
+      ) NATURAL
+      JOIN movie NATURAL
+      JOIN production_company
+      WHERE ${where}
+      ORDER BY ${order}
+  `;
+
+  db.query(sqlQuery, values, (err, result) => {
+    if (err) {
+      db.rollback(() => {
+        return res.sendStatus(400);
+      });
+    }
+    res.status(200).json(result);
   });
 });
 
@@ -259,8 +341,6 @@ app.post("/director", (req, res) => {
   const roles = [].concat(role);
   const quoteMovies = [].concat(quoteMovie);
   const quotes = [].concat(quote);
-
-  console.log(directed);
 
   db.beginTransaction(err => {
     if (err) {

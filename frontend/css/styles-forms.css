@@ -300,6 +300,7 @@ header {
   border-radius: 4px;
   padding: 0.5rem 1.2rem;
   cursor: pointer;
+  font-size: 1.6rem;
 }
 
 .options li:hover {
@@ -337,10 +338,6 @@ header {
   background: #bbb;
   transform: translateX(-50%);
 } */
-
-.options .option {
-  font-size: 1.6rem;
-}
 
 .input-group.success .select {
   border-color: #15803d;
@@ -419,13 +416,25 @@ header {
 }
 
 .btn.add-quote {
-  border-color: #8b919a;
+  background: #3394c8;
   margin-left: 3.2rem;
+  color: #fff;
+  transition: 0.2s;
+}
+
+.btn.add-quote:hover {
+  background: #0c72a9;
 }
 
 .btn.remove-movie {
-  border-color: #8b919a;
+  color: #fff;
+  background: #ed5140;
   margin-left: 2rem;
+  transition: 0.2s;
+}
+
+.btn.remove-movie:hover {
+  background: #d43827;
 }
 
 .form .btn-group {
