@@ -197,8 +197,8 @@ app.post("/report", (req, res) => {
 
   db.query(sqlQuery, values, (err, result) => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
     res.status(200).json(result);
@@ -258,23 +258,23 @@ app.post("/production", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
     const sqlInsertProd = "insert into production_company values (?,?,?,?,?)";
     db.query(sqlInsertProd, [id, name, city, state, country], (err, result) => {
       if (err) {
-        db.rollback(() => {
-          return res.sendStatus(400);
+        return db.rollback(() => {
+          res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
       });
@@ -290,8 +290,8 @@ app.post("/movie", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
@@ -302,8 +302,8 @@ app.post("/movie", (req, res) => {
       [mId, title, year, plot, length, production],
       (err, result) => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
 
@@ -311,8 +311,8 @@ app.post("/movie", (req, res) => {
         genres.forEach(genre => {
           db.query(sqlInsertGenre, [mId, genre], (err, result) => {
             if (err) {
-              db.rollback(() => {
-                return res.sendStatus(400);
+              return db.rollback(() => {
+                res.sendStatus(400);
               });
             }
           });
@@ -320,8 +320,8 @@ app.post("/movie", (req, res) => {
 
         db.commit(err => {
           if (err) {
-            db.rollback(() => {
-              return res.sendStatus(400);
+            return db.rollback(() => {
+              res.sendStatus(400);
             });
           }
         });
@@ -344,8 +344,8 @@ app.post("/director", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
@@ -355,8 +355,8 @@ app.post("/director", (req, res) => {
       const sqlInsertAct = "insert into actor values(?)";
       db.query(sqlInsertAct, [actId], (err, result) => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
       });
@@ -369,8 +369,8 @@ app.post("/director", (req, res) => {
       [dId, fname, lname, dob, gender, actId],
       (err, result) => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
 
@@ -378,8 +378,8 @@ app.post("/director", (req, res) => {
         directed.forEach(movie => {
           db.query(sqlInsertDirected, [movie, dId], (err, result) => {
             if (err) {
-              db.rollback(() => {
-                return res.sendStatus(400);
+              return db.rollback(() => {
+                res.sendStatus(400);
               });
             }
           });
@@ -396,8 +396,8 @@ app.post("/director", (req, res) => {
               [actId, mId, movieRole],
               (err, result) => {
                 if (err) {
-                  db.rollback(() => {
-                    return res.sendStatus(400);
+                  return db.rollback(() => {
+                    res.sendStatus(400);
                   });
                 }
               }
@@ -415,8 +415,8 @@ app.post("/director", (req, res) => {
                 [mId, actId, movieQuote],
                 (err, result) => {
                   if (err) {
-                    db.rollback(() => {
-                      return res.sendStatus(400);
+                    return db.rollback(() => {
+                      res.sendStatus(400);
                     });
                   }
                 }
@@ -427,8 +427,8 @@ app.post("/director", (req, res) => {
 
         db.commit(err => {
           if (err) {
-            db.rollback(() => {
-              return res.sendStatus(400);
+            return db.rollback(() => {
+              res.sendStatus(400);
             });
           }
         });
@@ -450,8 +450,8 @@ app.post("/actor", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
@@ -459,8 +459,8 @@ app.post("/actor", (req, res) => {
     const sqlInsertAct = "insert into actor values(?)";
     db.query(sqlInsertAct, [actId], (err, result) => {
       if (err) {
-        db.rollback(() => {
-          return res.sendStatus(400);
+        return db.rollback(() => {
+          res.sendStatus(400);
         });
       }
 
@@ -471,8 +471,8 @@ app.post("/actor", (req, res) => {
         [aId, fname, lname, dob, gender, actId],
         (err, result) => {
           if (err) {
-            db.rollback(() => {
-              return res.sendStatus(400);
+            return db.rollback(() => {
+              res.sendStatus(400);
             });
           }
 
@@ -486,8 +486,8 @@ app.post("/actor", (req, res) => {
               [actId, mId, movieRole],
               (err, result) => {
                 if (err) {
-                  db.rollback(() => {
-                    return res.sendStatus(400);
+                  return db.rollback(() => {
+                    res.sendStatus(400);
                   });
                 }
               }
@@ -506,8 +506,8 @@ app.post("/actor", (req, res) => {
                 (err, result) => {
                   console.log(err);
                   if (err) {
-                    db.rollback(() => {
-                      return res.sendStatus(400);
+                    return db.rollback(() => {
+                      res.sendStatus(400);
                     });
                   }
                 }
@@ -517,8 +517,8 @@ app.post("/actor", (req, res) => {
 
           db.commit(err => {
             if (err) {
-              db.rollback(() => {
-                return res.sendStatus(400);
+              return db.rollback(() => {
+                res.sendStatus(400);
               });
             }
           });
@@ -537,23 +537,23 @@ app.delete("/production/:id", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
     const sqlDeleteProd = "delete from production_company where p_id=?";
     db.query(sqlDeleteProd, [id], (err, result) => {
       if (err) {
-        db.rollback(() => {
-          return res.sendStatus(400);
+        return db.rollback(() => {
+          res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
       });
@@ -568,23 +568,23 @@ app.delete("/movie/:id", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
     const sqlDeleteMovie = "delete from movie where m_id=?";
     db.query(sqlDeleteMovie, [id], (err, result) => {
       if (err) {
-        db.rollback(() => {
-          return res.sendStatus(400);
+        return db.rollback(() => {
+          res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
       });
@@ -599,23 +599,23 @@ app.delete("/actor/:id", (req, res) => {
 
   db.beginTransaction(err => {
     if (err) {
-      db.rollback(() => {
-        return res.sendStatus(400);
+      return db.rollback(() => {
+        res.sendStatus(400);
       });
     }
 
     const sqlDeleteActor = "delete from actor where act_id=?";
     db.query(sqlDeleteActor, [id], (err, result) => {
       if (err) {
-        db.rollback(() => {
-          return res.sendStatus(400);
+        return db.rollback(() => {
+          res.sendStatus(400);
         });
       }
 
       db.commit(err => {
         if (err) {
-          db.rollback(() => {
-            return res.sendStatus(400);
+          return db.rollback(() => {
+            res.sendStatus(400);
           });
         }
       });
